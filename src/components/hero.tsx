@@ -31,6 +31,14 @@ export default function Hero() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [ratingValue, setRatingValue] = useState(0);
 
+  // Search state
+  const [searchInput, setSearchInput] = useState("");
+  const [searchSuggestions, setSearchSuggestions] = useState<string[]>([]);
+  const [isSearchDropdownOpen, setIsSearchDropdownOpen] = useState(false);
+  const [isLoadingSearchSuggestions, setIsLoadingSearchSuggestions] =
+    useState(false);
+  const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
   // Location search state
   const [locationInput, setLocationInput] = useState("");
   const [locationSuggestions, setLocationSuggestions] = useState<
@@ -80,6 +88,52 @@ export default function Hero() {
 
   const handleRatingChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setRatingValue(parseInt(e.target.value));
+  };
+
+  const handleSearchInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearchInput(value);
+
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current);
+    }
+
+    if (value.length >= 2) {
+      setIsLoadingSearchSuggestions(true);
+      setIsSearchDropdownOpen(true);
+
+      searchTimeoutRef.current = setTimeout(() => {
+        try {
+          // Mock search suggestions based on input
+          const mockSuggestions = [
+            "Anxiety",
+            "Depression",
+            "Stress management",
+            "Therapy",
+            "Counseling",
+            "Mental health support",
+            "Wellness coaching",
+            "Mindfulness",
+            "Meditation",
+          ].filter((item) => item.toLowerCase().includes(value.toLowerCase()));
+
+          setSearchSuggestions(mockSuggestions);
+        } catch (error) {
+          console.error("Error generating search suggestions:", error);
+          setSearchSuggestions([]);
+        } finally {
+          setIsLoadingSearchSuggestions(false);
+        }
+      }, 300);
+    } else {
+      setSearchSuggestions([]);
+      setIsSearchDropdownOpen(false);
+    }
+  };
+
+  const selectSearchSuggestion = (suggestion: string) => {
+    setSearchInput(suggestion);
+    setIsSearchDropdownOpen(false);
   };
 
   const handleLocationInputChange = (
@@ -139,47 +193,79 @@ export default function Hero() {
   };
 
   return (
-    <div className="relative bg-livebetter-light py-16 bg-[#f6f3f3]">
-      <div className="w-[139px] h-[127px]"></div>
+    <div className="relative bg-[#F7EFE2] py-16">
       <div className="container mx-auto px-4">
         <div className="flex flex-col items-center justify-center text-center">
-          <h1 className="text-4xl md:text-5xl font-bold text-livebetter mb-4">
-            Find Mental Health & Wellness Services
-          </h1>
+          <div className="w-full max-w-4xl mx-auto mb-8">
+            <div className="relative mb-8">
+              <input
+                type="text"
+                placeholder="Search by keywords"
+                className="w-full px-12 py-4 border border-gray-200 rounded-lg text-xl shadow-md"
+                value={searchInput}
+                onChange={handleSearchInputChange}
+                onFocus={() =>
+                  searchInput.length >= 2 && setIsSearchDropdownOpen(true)
+                }
+              />
+              <svg
+                className="absolute left-4 top-5 h-6 w-6 text-gray-400"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                />
+              </svg>
 
-          <p className="text-lg text-gray-600 mb-12 max-w-2xl">
-            Connect with the right support across the UK for your wellbeing
-            journey
-          </p>
-
-          <div className="w-full max-w-4xl mx-auto">
-            <div className="bg-white rounded-lg shadow-sm p-6 mb-8">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="relative">
-                  <input
-                    type="text"
-                    placeholder="Search for services..."
-                    className="w-full px-10 py-2 border border-gray-200 rounded-md"
-                  />
-                  <svg
-                    className="absolute left-3 top-3 h-4 w-4 text-gray-400"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                    />
-                  </svg>
+              {isSearchDropdownOpen && (
+                <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-y-auto">
+                  {isLoadingSearchSuggestions ? (
+                    <div className="px-4 py-2 text-sm text-gray-500">
+                      Loading suggestions...
+                    </div>
+                  ) : searchSuggestions.length > 0 ? (
+                    searchSuggestions.map((suggestion, index) => (
+                      <div
+                        key={index}
+                        className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm"
+                        onClick={() => selectSearchSuggestion(suggestion)}
+                      >
+                        {suggestion}
+                      </div>
+                    ))
+                  ) : searchInput.length >= 2 ? (
+                    <div className="px-4 py-2 text-sm text-gray-500">
+                      No suggestions found
+                    </div>
+                  ) : (
+                    <div className="px-4 py-2 text-sm text-gray-500">
+                      Type at least 2 characters
+                    </div>
+                  )}
                 </div>
+              )}
+            </div>
 
+            <h1 className="text-3xl md:text-4xl font-bold text-livebetter mb-4">
+              Find Mental Health & Wellness Services
+            </h1>
+
+            <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto font-semibold">
+              Connect with the right support across the UK for your wellbeing
+              journey
+            </p>
+
+            <div className="bg-[#F7EFE2] rounded-lg p-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                 <div className="relative">
                   <div
-                    className="w-full px-10 py-2 border border-gray-200 rounded-md flex justify-between items-center cursor-pointer"
+                    className="w-full px-10 py-2 border border-gray-200 rounded-md flex justify-between items-center cursor-pointer bg-white"
                     onClick={toggleDropdown}
                   >
                     <span>{getSelectedCategoriesText()}</span>
@@ -204,11 +290,11 @@ export default function Hero() {
                   )}
                 </div>
 
-                <div className="relative">
+                <div className="relative flex">
                   <input
                     type="text"
                     placeholder="Enter location"
-                    className="w-full px-10 py-2 border border-gray-200 rounded-md"
+                    className="w-full px-10 py-2 border border-gray-200 rounded-md bg-white"
                     value={locationInput}
                     onChange={handleLocationInputChange}
                     onFocus={() =>
@@ -248,7 +334,7 @@ export default function Hero() {
                 </div>
               </div>
 
-              <div className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-4 w-full">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 w-full">
                 <div className="flex items-center justify-start">
                   <input type="checkbox" id="online" className="mr-2" />
                   <label htmlFor="online" className="flex items-center text-sm">
