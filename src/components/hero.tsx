@@ -48,6 +48,14 @@ export default function Hero() {
   const [isLoadingSuggestions, setIsLoadingSuggestions] = useState(false);
   const locationTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
+  // Refs for click outside functionality
+  const searchInputRef = useRef<HTMLInputElement>(null);
+  const searchDropdownRef = useRef<HTMLDivElement>(null);
+  const categoryButtonRef = useRef<HTMLDivElement>(null);
+  const categoryDropdownRef = useRef<HTMLDivElement>(null);
+  const locationInputRef = useRef<HTMLInputElement>(null);
+  const locationDropdownRef = useRef<HTMLDivElement>(null);
+
   const supabase = createClient();
 
   useEffect(() => {
@@ -72,8 +80,53 @@ export default function Hero() {
     fetchCategories();
   }, [supabase]);
 
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      // Check if the click was outside the search input and its dropdown
+      if (
+        searchInputRef.current &&
+        !searchInputRef.current.contains(event.target as Node) &&
+        searchDropdownRef.current &&
+        !searchDropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsSearchDropdownOpen(false);
+      }
+
+      // Check if the click was outside the category button and its dropdown
+      if (
+        categoryButtonRef.current &&
+        !categoryButtonRef.current.contains(event.target as Node) &&
+        categoryDropdownRef.current &&
+        !categoryDropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsDropdownOpen(false);
+      }
+
+      // Check if the click was outside the location input and its dropdown
+      if (
+        locationInputRef.current &&
+        !locationInputRef.current.contains(event.target as Node) &&
+        locationDropdownRef.current &&
+        !locationDropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsLocationDropdownOpen(false);
+      }
+    }
+
+    // Add event listener
+    document.addEventListener("mousedown", handleClickOutside);
+
+    // Remove event listener on cleanup
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isSearchDropdownOpen, isDropdownOpen, isLocationDropdownOpen]); // Re-run effect if any dropdown state changes
+
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
+    // Close other dropdowns when category dropdown is opened
+    setIsSearchDropdownOpen(false);
+    setIsLocationDropdownOpen(false);
   };
 
   const toggleCategory = (categoryId: number) => {
@@ -197,61 +250,6 @@ export default function Hero() {
       <div className="container mx-auto px-4">
         <div className="flex flex-col items-center justify-center text-center">
           <div className="w-full max-w-4xl mx-auto mb-8">
-            <div className="relative mb-8">
-              <input
-                type="text"
-                placeholder="Search by keywords"
-                className="w-full px-12 py-4 border border-gray-200 rounded-lg text-xl shadow-md"
-                value={searchInput}
-                onChange={handleSearchInputChange}
-                onFocus={() =>
-                  searchInput.length >= 2 && setIsSearchDropdownOpen(true)
-                }
-              />
-              <svg
-                className="absolute left-4 top-5 h-6 w-6 text-gray-400"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                />
-              </svg>
-
-              {isSearchDropdownOpen && (
-                <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-y-auto">
-                  {isLoadingSearchSuggestions ? (
-                    <div className="px-4 py-2 text-sm text-gray-500">
-                      Loading suggestions...
-                    </div>
-                  ) : searchSuggestions.length > 0 ? (
-                    searchSuggestions.map((suggestion, index) => (
-                      <div
-                        key={index}
-                        className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm"
-                        onClick={() => selectSearchSuggestion(suggestion)}
-                      >
-                        {suggestion}
-                      </div>
-                    ))
-                  ) : searchInput.length >= 2 ? (
-                    <div className="px-4 py-2 text-sm text-gray-500">
-                      No suggestions found
-                    </div>
-                  ) : (
-                    <div className="px-4 py-2 text-sm text-gray-500">
-                      Type at least 2 characters
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
-
             <h1 className="text-3xl md:text-4xl font-bold text-livebetter mb-4">
               Find Mental Health & Wellness Services
             </h1>
@@ -261,79 +259,136 @@ export default function Hero() {
               journey
             </p>
 
-            <div className="bg-[#F7EFE2] rounded-lg p-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                <div className="relative">
-                  <div
-                    className="w-full px-10 py-2 border border-gray-200 rounded-md flex justify-between items-center cursor-pointer bg-white"
-                    onClick={toggleDropdown}
-                  >
-                    <span>{getSelectedCategoriesText()}</span>
-                    <ChevronDown className="h-4 w-4 text-gray-400" />
-                  </div>
-
-                  {isDropdownOpen && (
-                    <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-y-auto">
-                      {categories.map((category) => (
-                        <div
-                          key={category.id}
-                          className="px-4 py-2 hover:bg-gray-100 flex items-center justify-between cursor-pointer"
-                          onClick={() => toggleCategory(category.id)}
-                        >
-                          <span>{category.label}</span>
-                          {selectedCategories.includes(category.id) && (
-                            <Check className="h-4 w-4 text-livebetter-orange" />
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-
-                <div className="relative flex">
-                  <input
-                    type="text"
-                    placeholder="Enter location"
-                    className="w-full px-10 py-2 border border-gray-200 rounded-md bg-white"
-                    value={locationInput}
-                    onChange={handleLocationInputChange}
-                    onFocus={() =>
-                      locationInput.length > 0 &&
-                      setIsLocationDropdownOpen(true)
-                    }
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+              <div className="relative">
+                <input
+                  type="text"
+                  placeholder="Search by keywords"
+                  className="w-full px-10 py-2 border border-gray-200 rounded-md bg-white"
+                  value={searchInput}
+                  onChange={handleSearchInputChange}
+                  onFocus={() =>
+                    searchInput.length >= 2 && setIsSearchDropdownOpen(true)
+                  }
+                  ref={searchInputRef}
+                />
+                <svg
+                  className="absolute left-3 top-3 h-4 w-4 text-gray-400"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
                   />
-                  <MapPin className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-
-                  {isLocationDropdownOpen && (
-                    <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-y-auto">
-                      {isLoadingSuggestions ? (
-                        <div className="px-4 py-2 text-sm text-gray-500">
-                          Loading suggestions...
+                </svg>
+                {isSearchDropdownOpen && (
+                  <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-y-auto" ref={searchDropdownRef}>
+                    {isLoadingSearchSuggestions ? (
+                      <div className="px-4 py-2 text-sm text-gray-500">
+                        Loading suggestions...
+                      </div>
+                    ) : searchSuggestions.length > 0 ? (
+                      searchSuggestions.map((suggestion, index) => (
+                        <div
+                          key={index}
+                          className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm"
+                          onClick={() => selectSearchSuggestion(suggestion)}
+                        >
+                          {suggestion}
                         </div>
-                      ) : locationSuggestions.length > 0 ? (
-                        locationSuggestions.map((suggestion) => (
-                          <div
-                            key={suggestion.place_id}
-                            className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm"
-                            onClick={() => selectLocation(suggestion)}
-                          >
-                            {suggestion.display_name}
-                          </div>
-                        ))
-                      ) : locationInput.length > 2 ? (
-                        <div className="px-4 py-2 text-sm text-gray-500">
-                          No locations found
-                        </div>
-                      ) : (
-                        <div className="px-4 py-2 text-sm text-gray-500">
-                          Type at least 3 characters
-                        </div>
-                      )}
-                    </div>
-                  )}
-                </div>
+                      ))
+                    ) : searchInput.length >= 2 ? (
+                      <div className="px-4 py-2 text-sm text-gray-500">
+                        No suggestions found
+                      </div>
+                    ) : (
+                      <div className="px-4 py-2 text-sm text-gray-500">
+                        Type at least 2 characters
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
 
+              <div className="relative">
+                <div
+                  className="w-full px-10 py-2 border border-gray-200 rounded-md flex justify-between items-center cursor-pointer bg-white"
+                  onClick={toggleDropdown}
+                  ref={categoryButtonRef}
+                >
+                  <span>{getSelectedCategoriesText()}</span>
+                  <ChevronDown className="h-4 w-4 text-gray-400" />
+                </div>
+
+                {isDropdownOpen && (
+                  <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-y-auto" ref={categoryDropdownRef}>
+                    {categories.map((category) => (
+                      <div
+                        key={category.id}
+                        className="px-4 py-2 hover:bg-gray-100 flex items-center justify-between cursor-pointer"
+                        onClick={() => toggleCategory(category.id)}
+                      >
+                        <span>{category.label}</span>
+                        {selectedCategories.includes(category.id) && (
+                          <Check className="h-4 w-4 text-livebetter-orange" />
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <div className="relative flex">
+                <input
+                  type="text"
+                  placeholder="Enter location"
+                  className="w-full px-10 py-2 border border-gray-200 rounded-md bg-white"
+                  value={locationInput}
+                  onChange={handleLocationInputChange}
+                  onFocus={() =>
+                    locationInput.length > 0 &&
+                    setIsLocationDropdownOpen(true)
+                  }
+                  ref={locationInputRef}
+                />
+                <MapPin className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+
+                {isLocationDropdownOpen && (
+                  <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-y-auto">
+                    {isLoadingSuggestions ? (
+                      <div className="px-4 py-2 text-sm text-gray-500">
+                        Loading suggestions...
+                      </div>
+                    ) : locationSuggestions.length > 0 ? (
+                      locationSuggestions.map((suggestion) => (
+                        <div
+                          key={suggestion.place_id}
+                          className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm"
+                          onClick={() => selectLocation(suggestion)}
+                        >
+                          {suggestion.display_name}
+                        </div>
+                      ))
+                    ) : locationInput.length > 2 ? (
+                      <div className="px-4 py-2 text-sm text-gray-500">
+                        No locations found
+                      </div>
+                    ) : (
+                      <div className="px-4 py-2 text-sm text-gray-500">
+                        Type at least 3 characters
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="bg-[#F7EFE2] rounded-lg p-6">
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 w-full">
                 <div className="flex items-center justify-start">
                   <input type="checkbox" id="online" className="mr-2" />

@@ -13,16 +13,31 @@ export default async function Navbar() {
   } = await (await supabase).auth.getUser();
 
   return (
-    <nav className="bg-[#F7EFE2]">
+    <nav className="bg-[#F7EFE2] py-4">
       <div className="container mx-auto px-4 flex justify-between items-center">
         <Link href="/" prefetch className="relative h-10 w-40">
           <Image
+            src="/images/logo.png"
             alt="Live Better Logo"
             fill
             style={{ objectFit: "contain" }}
             priority
           />
         </Link>
+        <div className="flex gap-6 items-center">
+          <Link href="/guides" className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900">
+            Guides
+          </Link>
+          <Link href="/#" className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900">
+            Forums
+          </Link>
+          <Link href="/#" className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900">
+            About
+          </Link>
+          <Button variant="outline" className="px-4 py-2 text-sm font-medium bg-orange-500 text-white hover:bg-orange-600">
+            Help in a Crisis
+          </Button>
+        </div>
         <div className="flex gap-4 items-center">
           {user ? (
             <>

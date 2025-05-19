@@ -6,7 +6,7 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-gray-50 border-t border-gray-100">
+    <footer className="bg-[#F7EFE2] border-t border-gray-100">
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
           {/* Product Column */}
@@ -128,7 +128,7 @@ export default function Footer() {
         </div>
 
         <div className="flex flex-col md:flex-row justify-between items-center pt-8 border-t border-gray-200">
-          <div className="flex items-center gap-2 mb-4 md:mb-0">
+          <div className="flex flex-col md:flex-row items-center gap-2 mb-4 md:mb-0 w-full md:w-auto">
             <div className="relative w-40 h-12 grow">
               <Image
                 src="/images/logo.png"
@@ -137,7 +137,7 @@ export default function Footer() {
                 style={{ objectFit: "contain" }}
               />
             </div>
-            <span className="text-gray-600 relative">
+            <span className="text-gray-600 relative text-center md:text-left w-full md:w-auto">
               © {currentYear} Directory. All rights reserved.
             </span>
           </div>
