@@ -17,7 +17,6 @@ export default async function Navbar() {
       <div className="container mx-auto px-4 flex justify-between items-center">
         <Link href="/" prefetch className="relative h-10 w-40">
           <Image
-            src="/logo.png"
             alt="Live Better Logo"
             fill
             style={{ objectFit: "contain" }}

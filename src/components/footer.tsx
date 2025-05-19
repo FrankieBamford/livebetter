@@ -131,7 +131,7 @@ export default function Footer() {
           <div className="flex items-center gap-2 mb-4 md:mb-0">
             <div className="relative w-40 h-12 grow">
               <Image
-                src="/logo.png"
+                src="/images/logo.png"
                 alt="Live Better Logo"
                 fill
                 style={{ objectFit: "contain" }}
