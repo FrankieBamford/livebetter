@@ -28,10 +28,13 @@ export default async function Navbar() {
           <Link href="/guides" className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900">
             Guides
           </Link>
-          <Link href="/#" className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900">
-            Forums
+          <Link href="/resources" className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900">
+            Resources
           </Link>
-          <Link href="/#" className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900">
+          <Link href="/community" className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900">
+            Community
+          </Link>
+          <Link href="/about" className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900">
             About
           </Link>
           <Button variant="outline" className="px-4 py-2 text-sm font-medium bg-orange-500 text-white hover:bg-orange-600">
