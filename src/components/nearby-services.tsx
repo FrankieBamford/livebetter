@@ -162,21 +162,21 @@ export default function NearbyServices() {
 
   // Handle when user declines location sharing
   const handleLocationDecline = () => {
-    // Use a default location or just show services without sorting by distance
     setServices(mockServices.slice(0, 4));
   };
 
   useEffect(() => {
+    // Show initial services immediately
+    setServices(mockServices.slice(0, 4));
+
     if (userLocation) {
-      // Sort services by distance from user
+      // Sort services by distance from user if location is available
       const servicesWithDistance = mockServices.map((service) => {
-        // Get coordinates for the service location
         const coords = cityCoordinates[service.location] || {
           lat: 51.5074,
           lon: -0.1278,
-        }; // Default to London if not found
+        };
 
-        // Calculate distance
         const distance = calculateDistance(
           userLocation.lat,
           userLocation.lon,
@@ -190,7 +190,6 @@ export default function NearbyServices() {
         };
       });
 
-      // Sort by distance and take the first 4
       const sortedServices = servicesWithDistance
         .sort((a, b) => (a.distance || Infinity) - (b.distance || Infinity))
         .slice(0, 4);
@@ -200,11 +199,16 @@ export default function NearbyServices() {
   }, [userLocation]);
 
   return (
-    <>
-      <LocationConsent
-        onAccept={handleLocationAccept}
-        onDecline={handleLocationDecline}
-      />
+    <div>
+      {/* Optional location consent - only show if services are not yet sorted by distance */}
+      {!userLocation && (
+        <div className="mb-8 text-center">
+          <LocationConsent
+            onAccept={handleLocationAccept}
+            onDecline={handleLocationDecline}
+          />
+        </div>
+      )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {services.map((service) => (
@@ -295,6 +299,6 @@ export default function NearbyServices() {
           Load More Services
         </button>
       </div>
-    </>
+    </div>
   );
 }
