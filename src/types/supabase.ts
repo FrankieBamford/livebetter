@@ -12,15 +12,18 @@ export type Database = {
       categories: {
         Row: {
           id: number
-          label: string
+          name: string
+          slug: string | null
         }
         Insert: {
           id?: number
-          label: string
+          name: string
+          slug?: string | null
         }
         Update: {
           id?: number
-          label?: string
+          name?: string
+          slug?: string | null
         }
         Relationships: []
       }
@@ -56,15 +59,122 @@ export type Database = {
       }
       providers: {
         Row: {
+          created_at: string | null
+          description: string | null
+          email: string
+          google_rating: number[] | null
+          google_reviews_count: number | null
           id: string
+          is_online: boolean | null
+          is_verified: boolean | null
+          latitiude: number | null
+          live_rating: number | null
+          live_reviews_count: number | null
+          location: string
+          logo_url: string | null
+          longatude: number | null
+          modified_at: string | null
+          name: string
+          open_now: boolean | null
+          phone: string
+          requires_referal: boolean | null
+          slug: string | null
+          social_links: Json | null
+          website_url: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          email: string
+          google_rating?: number[] | null
+          google_reviews_count?: number | null
+          id?: string
+          is_online?: boolean | null
+          is_verified?: boolean | null
+          latitiude?: number | null
+          live_rating?: number | null
+          live_reviews_count?: number | null
+          location: string
+          logo_url?: string | null
+          longatude?: number | null
+          modified_at?: string | null
+          name: string
+          open_now?: boolean | null
+          phone: string
+          requires_referal?: boolean | null
+          slug?: string | null
+          social_links?: Json | null
+          website_url?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          email?: string
+          google_rating?: number[] | null
+          google_reviews_count?: number | null
+          id?: string
+          is_online?: boolean | null
+          is_verified?: boolean | null
+          latitiude?: number | null
+          live_rating?: number | null
+          live_reviews_count?: number | null
+          location?: string
+          logo_url?: string | null
+          longatude?: number | null
+          modified_at?: string | null
+          name?: string
+          open_now?: boolean | null
+          phone?: string
+          requires_referal?: boolean | null
+          slug?: string | null
+          social_links?: Json | null
+          website_url?: string | null
+        }
+        Relationships: []
+      }
+      service_subtypes: {
+        Row: {
+          description: string | null
+          id: number
+          name: string
+          service_type_id: number
+        }
+        Insert: {
+          description?: string | null
+          id?: number
+          name: string
+          service_type_id: number
+        }
+        Update: {
+          description?: string | null
+          id?: number
+          name?: string
+          service_type_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "service_subtypes_service_type_id_fkey"
+            columns: ["service_type_id"]
+            isOneToOne: false
+            referencedRelation: "service_types"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      service_types: {
+        Row: {
+          description: string | null
+          id: number
           name: string
         }
         Insert: {
-          id?: string
+          description?: string | null
+          id?: number
           name: string
         }
         Update: {
-          id?: string
+          description?: string | null
+          id?: number
           name?: string
         }
         Relationships: []
@@ -77,7 +187,6 @@ export type Database = {
           full_name: string | null
           id: string
           image: string | null
-          name: string | null
           token_identifier: string
           updated_at: string | null
           user_id: string | null
@@ -89,7 +198,6 @@ export type Database = {
           full_name?: string | null
           id: string
           image?: string | null
-          name?: string | null
           token_identifier: string
           updated_at?: string | null
           user_id?: string | null
@@ -101,7 +209,6 @@ export type Database = {
           full_name?: string | null
           id?: string
           image?: string | null
-          name?: string | null
           token_identifier?: string
           updated_at?: string | null
           user_id?: string | null

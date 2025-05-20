@@ -18,6 +18,11 @@ interface Category {
   label: string;
 }
 
+interface ServiceType {
+  id: number;
+  name: string;
+}
+
 interface LocationSuggestion {
   place_id: string;
   display_name: string;
@@ -30,6 +35,12 @@ export default function Hero() {
   const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [ratingValue, setRatingValue] = useState(0);
+  const [serviceTypes, setServiceTypes] = useState<ServiceType[]>([]);
+  const [selectedServiceTypes, setSelectedServiceTypes] = useState<number[]>(
+    [],
+  );
+  const [isServiceTypeDropdownOpen, setIsServiceTypeDropdownOpen] =
+    useState(false);
 
   // Search state
   const [searchInput, setSearchInput] = useState("");
@@ -55,6 +66,8 @@ export default function Hero() {
   const categoryDropdownRef = useRef<HTMLDivElement>(null);
   const locationInputRef = useRef<HTMLInputElement>(null);
   const locationDropdownRef = useRef<HTMLDivElement>(null);
+  const serviceTypeButtonRef = useRef<HTMLDivElement>(null);
+  const serviceTypeDropdownRef = useRef<HTMLDivElement>(null);
 
   const supabase = createClient();
 
@@ -77,7 +90,26 @@ export default function Hero() {
       }
     }
 
+    async function fetchServiceTypes() {
+      try {
+        const { data, error } = await supabase
+          .from("service_types")
+          .select("*")
+          .order("name");
+
+        if (error) {
+          console.error("Error fetching service types:", error);
+          return;
+        }
+
+        setServiceTypes(data || []);
+      } catch (error) {
+        console.error("Failed to fetch service types:", error);
+      }
+    }
+
     fetchCategories();
+    fetchServiceTypes();
   }, [supabase]);
 
   useEffect(() => {
@@ -111,6 +143,16 @@ export default function Hero() {
       ) {
         setIsLocationDropdownOpen(false);
       }
+
+      // Check if the click was outside the service type button and its dropdown
+      if (
+        serviceTypeButtonRef.current &&
+        !serviceTypeButtonRef.current.contains(event.target as Node) &&
+        serviceTypeDropdownRef.current &&
+        !serviceTypeDropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsServiceTypeDropdownOpen(false);
+      }
     }
 
     // Add event listener
@@ -120,12 +162,26 @@ export default function Hero() {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [isSearchDropdownOpen, isDropdownOpen, isLocationDropdownOpen]); // Re-run effect if any dropdown state changes
+  }, [
+    isSearchDropdownOpen,
+    isDropdownOpen,
+    isLocationDropdownOpen,
+    isServiceTypeDropdownOpen,
+  ]); // Re-run effect if any dropdown state changes
 
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
     // Close other dropdowns when category dropdown is opened
     setIsSearchDropdownOpen(false);
+    setIsLocationDropdownOpen(false);
+    setIsServiceTypeDropdownOpen(false);
+  };
+
+  const toggleServiceTypeDropdown = () => {
+    setIsServiceTypeDropdownOpen(!isServiceTypeDropdownOpen);
+    // Close other dropdowns when service type dropdown is opened
+    setIsSearchDropdownOpen(false);
+    setIsDropdownOpen(false);
     setIsLocationDropdownOpen(false);
   };
 
@@ -135,6 +191,16 @@ export default function Hero() {
         return prev.filter((id) => id !== categoryId);
       } else {
         return [...prev, categoryId];
+      }
+    });
+  };
+
+  const toggleServiceType = (serviceTypeId: number) => {
+    setSelectedServiceTypes((prev) => {
+      if (prev.includes(serviceTypeId)) {
+        return prev.filter((id) => id !== serviceTypeId);
+      } else {
+        return [...prev, serviceTypeId];
       }
     });
   };
@@ -236,7 +302,7 @@ export default function Hero() {
 
   const getSelectedCategoriesText = () => {
     if (selectedCategories.length === 0) {
-      return "All Categories";
+      return "Specific Needs";
     } else if (selectedCategories.length === 1) {
       const category = categories.find((c) => c.id === selectedCategories[0]);
       return category ? category.label : "1 Category";
@@ -245,11 +311,24 @@ export default function Hero() {
     }
   };
 
+  const getSelectedServiceTypesText = () => {
+    if (selectedServiceTypes.length === 0) {
+      return "Service Type";
+    } else if (selectedServiceTypes.length === 1) {
+      const serviceType = serviceTypes.find(
+        (st) => st.id === selectedServiceTypes[0],
+      );
+      return serviceType ? serviceType.name : "1 Service Type";
+    } else {
+      return `${selectedServiceTypes.length} Service Types`;
+    }
+  };
+
   return (
     <div className="relative bg-[#F7EFE2] py-16">
       <div className="container mx-auto px-4">
         <div className="flex flex-col items-center justify-center text-center">
-          <div className="w-full max-w-4xl mx-auto mb-8">
+          <div className="w-full mx-auto mb-8 max-w-5xl">
             <h1 className="text-3xl md:text-4xl font-bold text-livebetter mb-4">
               Find Mental Health & Wellness Services
             </h1>
@@ -259,7 +338,7 @@ export default function Hero() {
               journey
             </p>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
               <div className="relative">
                 <input
                   type="text"
@@ -287,7 +366,10 @@ export default function Hero() {
                   />
                 </svg>
                 {isSearchDropdownOpen && (
-                  <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-y-auto" ref={searchDropdownRef}>
+                  <div
+                    className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-y-auto"
+                    ref={searchDropdownRef}
+                  >
                     {isLoadingSearchSuggestions ? (
                       <div className="px-4 py-2 text-sm text-gray-500">
                         Loading suggestions...
@@ -326,7 +408,10 @@ export default function Hero() {
                 </div>
 
                 {isDropdownOpen && (
-                  <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-y-auto" ref={categoryDropdownRef}>
+                  <div
+                    className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-y-auto"
+                    ref={categoryDropdownRef}
+                  >
                     {categories.map((category) => (
                       <div
                         key={category.id}
@@ -351,8 +436,7 @@ export default function Hero() {
                   value={locationInput}
                   onChange={handleLocationInputChange}
                   onFocus={() =>
-                    locationInput.length > 0 &&
-                    setIsLocationDropdownOpen(true)
+                    locationInput.length > 0 && setIsLocationDropdownOpen(true)
                   }
                   ref={locationInputRef}
                 />
@@ -386,10 +470,41 @@ export default function Hero() {
                   </div>
                 )}
               </div>
+
+              <div className="relative">
+                <div
+                  className="w-full px-10 py-2 border border-gray-200 rounded-md flex justify-between items-center cursor-pointer bg-white"
+                  onClick={toggleServiceTypeDropdown}
+                  ref={serviceTypeButtonRef}
+                >
+                  <span>{getSelectedServiceTypesText()}</span>
+                  <ChevronDown className="h-4 w-4 text-gray-400" />
+                </div>
+
+                {isServiceTypeDropdownOpen && (
+                  <div
+                    className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-y-auto"
+                    ref={serviceTypeDropdownRef}
+                  >
+                    {serviceTypes.map((serviceType) => (
+                      <div
+                        key={serviceType.id}
+                        className="px-4 py-2 hover:bg-gray-100 flex items-center justify-between cursor-pointer"
+                        onClick={() => toggleServiceType(serviceType.id)}
+                      >
+                        <span>{serviceType.name}</span>
+                        {selectedServiceTypes.includes(serviceType.id) && (
+                          <Check className="h-4 w-4 text-livebetter-orange" />
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
 
-            <div className="bg-[#F7EFE2] rounded-lg p-6">
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 w-full">
+            <div className="bg-[#F7EFE2] rounded-lg p-6 flex flex-col items-center justify-center">
+              <div className="w-full flex flex-col space-y-4 sm:space-y-0 sm:grid sm:grid-cols-2 md:grid-cols-4 md:gap-x-8 lg:gap-x-16 xl:gap-x-32">
                 <div className="flex items-center justify-start">
                   <input type="checkbox" id="online" className="mr-2" />
                   <label htmlFor="online" className="flex items-center text-sm">
@@ -427,8 +542,10 @@ export default function Hero() {
               </div>
 
               <div className="mt-6">
-                <div className="flex flex-col items-start">
-                  <label className="text-sm mb-1">Minimum Rating</label>
+                <div className="flex items-end flex-row gap-x-10">
+                  <label className="text-sm mb-1 grow min-w-[120px]">
+                    Minimum Rating
+                  </label>
                   <div className="w-full flex items-center">
                     <input
                       type="range"
@@ -436,9 +553,9 @@ export default function Hero() {
                       max="5"
                       value={ratingValue}
                       onChange={handleRatingChange}
-                      className="w-full"
+                      className="w-full max-w-3xl flex flex-row justify-center items-center"
                     />
-                    <span className="ml-2 text-sm">{ratingValue} / 5</span>
+                    <span className="ml-2 text-sm w-10">{ratingValue} / 5</span>
                   </div>
                 </div>
               </div>
