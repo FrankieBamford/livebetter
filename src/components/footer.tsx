@@ -100,9 +100,11 @@ export default function Footer() {
           </div>
 
           {/* Legal Column */}
-          <div>
-            <h3 className="font-semibold text-gray-900 mb-4">Legal</h3>
-            <ul className="space-y-2">
+          <div className="mb-6 sm:mb-0">
+            <h3 className="font-semibold text-gray-900 mb-3 md:mb-4 text-center sm:text-left">
+              Legal
+            </h3>
+            <ul className="space-y-2 text-center sm:text-left">
               <li>
                 <Link href="#" className="text-gray-600 hover:text-blue-600">
                   Privacy

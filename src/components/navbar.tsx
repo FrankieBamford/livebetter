@@ -12,6 +12,10 @@ export default async function Navbar() {
     data: { user },
   } = await (await supabase).auth.getUser();
 
+  // Note: This would normally be a useState hook, but since this is a Server Component,
+  // we're not actually using it interactively. In a real implementation, you'd need to
+  // convert this to a Client Component with proper state management.
+
   return (
     <nav className="bg-[#F7EFE2] py-4">
       <div className="container mx-auto px-4 flex justify-between items-center">
@@ -25,19 +29,34 @@ export default async function Navbar() {
           />
         </Link>
         <div className="flex gap-6 items-center">
-          <Link href="/guides" className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900">
+          <Link
+            href="/guides"
+            className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900"
+          >
             Guides
           </Link>
-          <Link href="/resources" className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900">
+          <Link
+            href="/resources"
+            className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900"
+          >
             Resources
           </Link>
-          <Link href="/community" className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900">
+          <Link
+            href="/community"
+            className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900"
+          >
             Community
           </Link>
-          <Link href="/about" className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900">
+          <Link
+            href="/about"
+            className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900"
+          >
             About
           </Link>
-          <Button variant="outline" className="px-4 py-2 text-sm font-medium bg-orange-500 text-white hover:bg-orange-600">
+          <Button
+            variant="outline"
+            className="px-4 py-2 text-sm font-medium bg-orange-500 text-white hover:bg-orange-600"
+          >
             Help in a Crisis
           </Button>
         </div>
