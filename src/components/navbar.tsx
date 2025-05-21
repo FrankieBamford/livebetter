@@ -1,20 +1,30 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
-import { createClient } from "../../supabase/server";
+import { useEffect, useState } from "react";
+import { createClient } from "../../supabase/client";
 import { Button } from "./ui/button";
-import { User, UserCircle } from "lucide-react";
+import { UserCircle } from "lucide-react";
 import UserProfile from "./user-profile";
+import type { User } from "@supabase/auth-js";
 
-export default async function Navbar() {
-  const supabase = createClient();
+export default function Navbar() {
+  const [user, setUser] = useState<User | null>(null);
 
-  const {
-    data: { user },
-  } = await (await supabase).auth.getUser();
-
-  // Note: This would normally be a useState hook, but since this is a Server Component,
-  // we're not actually using it interactively. In a real implementation, you'd need to
-  // convert this to a Client Component with proper state management.
+  useEffect(() => {
+    const supabase = createClient();
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      setUser(user);
+    });
+    // Listen for auth changes
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+    return () => {
+      listener?.subscription.unsubscribe();
+    };
+  }, []);
 
   return (
     <nav className="bg-[#F7EFE2] py-4">
@@ -55,7 +65,7 @@ export default async function Navbar() {
           </Link>
           <Button
             variant="outline"
-            className="px-4 py-2 text-sm font-medium bg-orange-500 text-white hover:bg-orange-600"
+            className="px-4 py-2 text-sm font-medium bg-[#FF3939] text-white hover:bg-[#cc2e2e] hover:text-white transform hover:scale-105 transition-all duration-200"
           >
             Help in a Crisis
           </Button>
@@ -65,25 +75,18 @@ export default async function Navbar() {
             <>
               <Link
                 href="/dashboard"
-                className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900"
+                className="px-4 py-2 text-sm font-medium text-white hover:text-white"
               >
                 <Button>Dashboard</Button>
               </Link>
-              <UserProfile />
             </>
           ) : (
             <>
               <Link
                 href="/sign-in"
-                className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-800"
+                className="px-4 py-2 text-sm font-medium text-white bg-[#3A3FC1] rounded-md hover:bg-[#2e32a6] transform hover:scale-105 transition-all duration-200"
               >
                 Sign In
-              </Link>
-              <Link
-                href="/sign-up"
-                className="px-4 py-2 text-sm font-medium text-white bg-black rounded-md hover:bg-gray-800"
-              >
-                Sign Up
               </Link>
             </>
           )}

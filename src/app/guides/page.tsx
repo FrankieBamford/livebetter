@@ -66,7 +66,7 @@ export default function GuidesPage() {
               </CardHeader>
               <CardContent>
                 <CardDescription className="mb-4">{guide.description}</CardDescription>
-                <Button variant="outline" className="w-full group">
+                <Button variant="outline" className="w-full group bg-[#3A3FC1] text-white hover:bg-[#2e32a6] transform hover:scale-105 transition-all duration-200">
                   Read Guide
                   <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
                 </Button>
@@ -80,7 +80,7 @@ export default function GuidesPage() {
           <p className="text-gray-600 mb-6">
             Our team of experts is constantly creating new guides. Let us know what topics you'd like to see.
           </p>
-          <Button variant="outline" className="bg-orange-500 text-white hover:bg-orange-600">
+          <Button variant="outline" className="bg-[#FF5001] text-white hover:bg-[#cc4001] transform hover:scale-105 transition-all duration-200">
             Suggest a Guide Topic
           </Button>
         </div>

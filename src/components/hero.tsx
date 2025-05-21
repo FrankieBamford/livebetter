@@ -561,7 +561,7 @@ export default function Hero() {
               </div>
 
               <div className="mt-6 flex justify-center">
-                <button className="px-8 py-3 bg-livebetter-orange text-white font-medium rounded-md hover:bg-orange-600 transition-colors">
+                <button className="px-8 py-3 bg-[#FF5000] text-white font-medium rounded-md hover:bg-[#cc4001] hover:text-white transform hover:scale-105 transition-all duration-200">
                   Search Services
                 </button>
               </div>

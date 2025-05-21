@@ -2,7 +2,7 @@ import Footer from "@/components/footer";
 import Hero from "@/components/hero";
 import Navbar from "@/components/navbar";
 import { MapPin, Phone, Mail } from "lucide-react";
-import { createClient } from "../../supabase/server";
+import { createClient } from "@/app/lib/supabase/server";
 import Link from "next/link";
 import Image from "next/image";
 import NearbyServices from "@/components/nearby-services";

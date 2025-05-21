@@ -26,8 +26,7 @@ const mockServices: Service[] = [
     categories: ["Support Group", "Meditation"],
     location: "Manchester, UK",
     rating: 4.5,
-    image:
-      "https://images.unsplash.com/photo-1527301876608-f8a4b4faac8b?w=800&q=80",
+    image: "/images/wellnesstogether.png",
   },
   {
     id: 2,
@@ -37,8 +36,7 @@ const mockServices: Service[] = [
     categories: ["Therapy", "Holistic"],
     location: "Liverpool, UK",
     rating: 4.8,
-    image:
-      "https://images.unsplash.com/photo-1598387993281-cecf8b71a8f8?w=800&q=80",
+    image: "/images/mind&bodytherapy.png",
   },
   {
     id: 3,
@@ -284,7 +282,7 @@ export default function NearbyServices() {
 
                 <Link
                   href={`#service-${service.id}`}
-                  className="px-4 py-2 bg-blue-500 text-white text-sm font-medium rounded-md hover:bg-blue-600 transition-colors"
+                  className="px-4 py-2 bg-[#3A3FC1] text-white text-sm font-medium rounded-md hover:bg-[#2e32a6] hover:text-white transform hover:scale-105 transition-all duration-200"
                 >
                   View Listing
                 </Link>
@@ -295,10 +293,13 @@ export default function NearbyServices() {
       </div>
 
       <div className="mt-12 text-center">
-        <button className="px-6 py-3 bg-white text-livebetter font-medium rounded-md hover:bg-gray-100 transition-colors">
+        <button className="px-6 py-3 bg-white text-livebetter font-medium rounded-md hover:bg-gray-100 transform hover:scale-105 transition-all duration-200">
           Load More Services
         </button>
       </div>
+
+      
+
     </div>
   );
 }
