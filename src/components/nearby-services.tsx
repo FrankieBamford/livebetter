@@ -207,12 +207,11 @@ export default function NearbyServices() {
           />
         </div>
       )}
-
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {services.map((service) => (
           <div
             key={service.id}
-            className="bg-white rounded-lg overflow-hidden shadow-md"
+            className="rounded-lg overflow-hidden shadow-md bg-[#F8EFE2]"
           >
             <div className="h-48 overflow-hidden">
               <img
@@ -222,7 +221,7 @@ export default function NearbyServices() {
               />
             </div>
 
-            <div className="p-4">
+            <div className="p-4 bg-[#F8EFE2e] bg-[#F8EFE2]">
               <div className="flex gap-2 mb-2 flex-wrap">
                 {service.categories.map((category, idx) => (
                   <span
@@ -291,15 +290,11 @@ export default function NearbyServices() {
           </div>
         ))}
       </div>
-
       <div className="mt-12 text-center">
-        <button className="px-6 py-3 bg-white text-livebetter font-medium rounded-md hover:bg-gray-100 transform hover:scale-105 transition-all duration-200">
+        <button className="px-6 py-3 text-livebetter font-medium rounded-md hover:bg-gray-100 transform hover:scale-105 transition-all duration-200 bg-[#F8EFE2]">
           Load More Services
         </button>
       </div>
-
-      
-
     </div>
   );
 }

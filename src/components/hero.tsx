@@ -41,6 +41,12 @@ export default function Hero() {
   );
   const [isServiceTypeDropdownOpen, setIsServiceTypeDropdownOpen] =
     useState(false);
+  const [checkboxStates, setCheckboxStates] = useState({
+    online: false,
+    free: false,
+    referral: false,
+    open: false,
+  });
 
   // Search state
   const [searchInput, setSearchInput] = useState("");
@@ -325,15 +331,15 @@ export default function Hero() {
   };
 
   return (
-    <div className="relative bg-[#F7EFE2] py-16">
+    <div className="relative bg-[#F7EFE2] py-16 border-[#004B2A]">
       <div className="container mx-auto px-4">
         <div className="flex flex-col items-center justify-center text-center">
           <div className="w-full mx-auto mb-8 max-w-5xl">
-            <h1 className="text-3xl md:text-4xl font-bold text-livebetter mb-4">
+            <h1 className="text-3xl md:text-4xl font-bold text-livebetter mb-4 text-[#004B2A]">
               Find Mental Health & Wellness Services
             </h1>
 
-            <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto font-semibold">
+            <p className="text-lg mb-8 max-w-2xl mx-auto font-semibold text-[#004B2A]">
               Connect with the right support across the UK for your wellbeing
               journey
             </p>
@@ -343,7 +349,7 @@ export default function Hero() {
                 <input
                   type="text"
                   placeholder="Search by keywords"
-                  className="w-full px-10 py-2 border border-gray-200 rounded-md bg-white"
+                  className="w-full px-10 py-2 rounded-md bg-[#F8EFE2] border-[#004B2A] border-2"
                   value={searchInput}
                   onChange={handleSearchInputChange}
                   onFocus={() =>
@@ -399,12 +405,12 @@ export default function Hero() {
 
               <div className="relative">
                 <div
-                  className="w-full px-10 py-2 border border-gray-200 rounded-md flex justify-between items-center cursor-pointer bg-white"
+                  className="w-full px-10 py-2 rounded-md flex justify-between items-center cursor-pointer bg-[#f2eade] border-[#004B2A] border-2"
                   onClick={toggleDropdown}
                   ref={categoryButtonRef}
                 >
                   <span>{getSelectedCategoriesText()}</span>
-                  <ChevronDown className="h-4 w-4 text-gray-400" />
+                  <ChevronDown className="h-4 w-4 text-[gray-400] text-[#000000]" />
                 </div>
 
                 {isDropdownOpen && (
@@ -428,11 +434,11 @@ export default function Hero() {
                 )}
               </div>
 
-              <div className="relative flex">
+              <div className="relative flex bg-[ #F8EFE2] bg-[#F8EFE2] border-[#004B2A] border-2 rounded-lg text-right text-base font-normal text-black">
                 <input
                   type="text"
                   placeholder="Enter location"
-                  className="w-full px-10 py-2 border border-gray-200 rounded-md bg-white"
+                  className="w-full px-10 py-2 border border-gray-200 rounded-md bg-[#F8EFE2] text-[#000000] font-normal"
                   value={locationInput}
                   onChange={handleLocationInputChange}
                   onFocus={() =>
@@ -473,12 +479,12 @@ export default function Hero() {
 
               <div className="relative">
                 <div
-                  className="w-full px-10 py-2 border border-gray-200 rounded-md flex justify-between items-center cursor-pointer bg-white"
+                  className="w-full px-10 py-2 rounded-md flex justify-between items-center cursor-pointer bg-[#F8EFE2] border-[#004B2A] border-2"
                   onClick={toggleServiceTypeDropdown}
                   ref={serviceTypeButtonRef}
                 >
                   <span>{getSelectedServiceTypesText()}</span>
-                  <ChevronDown className="h-4 w-4 text-gray-400" />
+                  <ChevronDown className="h-4 w-4 text-[#000000]" />
                 </div>
 
                 {isServiceTypeDropdownOpen && (
@@ -504,40 +510,93 @@ export default function Hero() {
             </div>
 
             <div className="bg-[#F7EFE2] rounded-lg p-6 flex flex-col items-center justify-center">
-              <div className="w-full flex flex-col space-y-4 sm:space-y-0 sm:grid sm:grid-cols-2 md:grid-cols-4 md:gap-x-8 lg:gap-x-16 xl:gap-x-32">
-                <div className="flex items-center justify-start">
-                  <input type="checkbox" id="online" className="mr-2" />
-                  <label htmlFor="online" className="flex items-center text-sm">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                <div
+                  className={`flex items-center justify-start ${checkboxStates.online ? "bg-blue-200" : "bg-blue-100 hover:bg-blue-200"} px-3 py-2 cursor-pointer transition-colors rounded-2xl`}
+                  onClick={() => {
+                    setCheckboxStates((prev) => ({
+                      ...prev,
+                      online: !prev.online,
+                    }));
+                  }}
+                >
+                  <input
+                    type="checkbox"
+                    id="online"
+                    className="hidden"
+                    checked={checkboxStates.online}
+                    onChange={() => {}}
+                  />
+                  <div className="flex items-center text-sm">
                     <Globe className="w-4 h-4 mr-2 text-blue-500" />
                     Online Services
-                  </label>
+                  </div>
                 </div>
 
-                <div className="flex items-center justify-start">
-                  <input type="checkbox" id="free" className="mr-2" />
-                  <label htmlFor="free" className="flex items-center text-sm">
+                <div
+                  className={`flex items-center justify-start ${checkboxStates.free ? "bg-green-200" : "bg-green-100 hover:bg-green-200"} px-3 py-2 cursor-pointer transition-colors rounded-2xl`}
+                  onClick={() => {
+                    setCheckboxStates((prev) => ({
+                      ...prev,
+                      free: !prev.free,
+                    }));
+                  }}
+                >
+                  <input
+                    type="checkbox"
+                    id="free"
+                    className="hidden"
+                    checked={checkboxStates.free}
+                    onChange={() => {}}
+                  />
+                  <div className="flex items-center text-sm">
                     <DollarSign className="w-4 h-4 mr-2 text-green-500" />
                     Free Services
-                  </label>
+                  </div>
                 </div>
 
-                <div className="flex items-center justify-start">
-                  <input type="checkbox" id="referral" className="mr-2" />
-                  <label
-                    htmlFor="referral"
-                    className="flex items-center text-sm"
-                  >
+                <div
+                  className={`flex items-center justify-start ${checkboxStates.referral ? "bg-purple-200" : "bg-purple-100 hover:bg-purple-200"} px-3 py-2 cursor-pointer transition-colors rounded-2xl`}
+                  onClick={() => {
+                    setCheckboxStates((prev) => ({
+                      ...prev,
+                      referral: !prev.referral,
+                    }));
+                  }}
+                >
+                  <input
+                    type="checkbox"
+                    id="referral"
+                    className="hidden"
+                    checked={checkboxStates.referral}
+                    onChange={() => {}}
+                  />
+                  <div className="flex items-center text-sm">
                     <FileText className="w-4 h-4 mr-2 text-purple-500" />
                     Requires Referral
-                  </label>
+                  </div>
                 </div>
 
-                <div className="flex items-center justify-start">
-                  <input type="checkbox" id="open" className="mr-2" />
-                  <label htmlFor="open" className="flex items-center text-sm">
+                <div
+                  className={`flex items-center justify-start ${checkboxStates.open ? "bg-yellow-200" : "bg-yellow-100 hover:bg-yellow-200"} px-3 py-2 cursor-pointer transition-colors rounded-2xl`}
+                  onClick={() => {
+                    setCheckboxStates((prev) => ({
+                      ...prev,
+                      open: !prev.open,
+                    }));
+                  }}
+                >
+                  <input
+                    type="checkbox"
+                    id="open"
+                    className="hidden"
+                    checked={checkboxStates.open}
+                    onChange={() => {}}
+                  />
+                  <div className="flex items-center text-sm">
                     <Clock className="w-4 h-4 mr-2 text-yellow-500" />
                     Open Now
-                  </label>
+                  </div>
                 </div>
               </div>
 
