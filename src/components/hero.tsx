@@ -331,11 +331,11 @@ export default function Hero() {
   };
 
   return (
-    <div className="relative bg-[#F7EFE2] py-16 border-[#004B2A]">
+    <div className="relative bg-[#F7EFE2] py-16 border-[#0B6445]">
       <div className="container mx-auto px-4">
         <div className="flex flex-col items-center justify-center text-center">
-          <div className="w-full mx-auto mb-8 max-w-5xl">
-            <h1 className="text-3xl md:text-4xl font-bold text-livebetter mb-4 text-[#004B2A]">
+          <div className="mx-auto mb-8 max-w-5xl w-fit">
+            <h1 className="text-3xl md:text-4xl font-bold text-livebetter mb-4 text-[004B2A] text-[0B6445] text-[#0b6344]">
               Find Mental Health & Wellness Services
             </h1>
 
@@ -403,9 +403,9 @@ export default function Hero() {
                 )}
               </div>
 
-              <div className="relative">
+              <div className="relative bg-[#F8EFE2]">
                 <div
-                  className="w-full px-10 py-2 rounded-md flex justify-between items-center cursor-pointer bg-[#f2eade] border-[#004B2A] border-2"
+                  className="w-full px-10 py-2 rounded-md flex justify-between items-center cursor-pointer border-[#004B2A] border-2 bg-[#F8EFE2]"
                   onClick={toggleDropdown}
                   ref={categoryButtonRef}
                 >

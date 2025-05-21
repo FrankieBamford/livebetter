@@ -291,7 +291,7 @@ export default function NearbyServices() {
         ))}
       </div>
       <div className="mt-12 text-center">
-        <button className="px-6 py-3 text-livebetter font-medium rounded-md hover:bg-gray-100 transform hover:scale-105 transition-all duration-200 bg-[#F8EFE2]">
+        <button className="px-6 py-3 text-livebetter font-medium rounded-md hover:bg-[#EDE1CF] transform hover:scale-105 transition-all duration-200 bg-[#F8EFE2]">
           Load More Services
         </button>
       </div>
