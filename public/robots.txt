@@ -1,0 +1,10 @@
+# *
+User-agent: *
+Allow: /
+
+# Host
+Host: https://livebetter.directory
+
+# Sitemaps
+Sitemap: https://livebetter.directory/sitemap.xml
+Sitemap: https://livebetter.directory/server-sitemap.xml
