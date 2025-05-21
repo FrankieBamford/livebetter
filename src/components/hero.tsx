@@ -227,22 +227,24 @@ export default function Hero() {
       setIsLoadingSearchSuggestions(true);
       setIsSearchDropdownOpen(true);
 
-      searchTimeoutRef.current = setTimeout(() => {
+      searchTimeoutRef.current = setTimeout(async () => {
         try {
-          // Mock search suggestions based on input
-          const mockSuggestions = [
-            "Anxiety",
-            "Depression",
-            "Stress management",
-            "Therapy",
-            "Counseling",
-            "Mental health support",
-            "Wellness coaching",
-            "Mindfulness",
-            "Meditation",
-          ].filter((item) => item.toLowerCase().includes(value.toLowerCase()));
+          // Fetch search suggestions from Supabase
+          const { data, error } = await supabase
+            .from("services")
+            .select("name")
+            .ilike("name", `%${value}%`)
+            .limit(10);
 
-          setSearchSuggestions(mockSuggestions);
+          if (error) {
+            console.error("Error fetching search suggestions:", error);
+            setSearchSuggestions([]);
+            return;
+          }
+
+          // Extract names from the results
+          const suggestions = data.map((item) => item.name);
+          setSearchSuggestions(suggestions);
         } catch (error) {
           console.error("Error generating search suggestions:", error);
           setSearchSuggestions([]);
@@ -426,7 +428,7 @@ export default function Hero() {
                       >
                         <span>{category.label}</span>
                         {selectedCategories.includes(category.id) && (
-                          <Check className="h-4 w-4 text-livebetter-orange" />
+                          <Check className="h-4 w-4 text-[#FF5000]" />
                         )}
                       </div>
                     ))}
