@@ -197,7 +197,7 @@ export default function NearbyServices() {
   }, [userLocation]);
 
   return (
-    <div className="bg-[#045741] px-7 py-9">
+    <div className="bg-[#045741] px-7 py-8">
       {/* Optional location consent - only show if services are not yet sorted by distance */}
       {!userLocation && (
         <div className="mb-8 text-center">

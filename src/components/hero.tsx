@@ -310,7 +310,7 @@ export default function Hero() {
 
   const getSelectedCategoriesText = () => {
     if (selectedCategories.length === 0) {
-      return "Specific Needs";
+      return "What do you need help with?";
     } else if (selectedCategories.length === 1) {
       const category = categories.find((c) => c.id === selectedCategories[0]);
       return category ? category.label : "1 Category";
@@ -411,7 +411,7 @@ export default function Hero() {
                   onClick={toggleDropdown}
                   ref={categoryButtonRef}
                 >
-                  <span>{getSelectedCategoriesText()}</span>
+                  <span>Support Type</span>
                   <ChevronDown className="h-4 w-4 text-[gray-400] text-[#000000]" />
                 </div>
 
@@ -514,7 +514,7 @@ export default function Hero() {
             <div className="bg-[#F7EFE2] rounded-lg p-6 flex flex-col items-center justify-center">
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
                 <div
-                  className={`flex items-center justify-start ${checkboxStates.online ? "bg-blue-200" : "bg-blue-100 hover:bg-blue-200"} px-3 py-2 cursor-pointer transition-colors rounded-2xl`}
+                  className={`flex items-center justify-start bg-blue-200 px-3 py-2 cursor-pointer transition-colors rounded-2xl`}
                   onClick={() => {
                     setCheckboxStates((prev) => ({
                       ...prev,
@@ -536,7 +536,7 @@ export default function Hero() {
                 </div>
 
                 <div
-                  className={`flex items-center justify-start ${checkboxStates.free ? "bg-green-200" : "bg-green-100 hover:bg-green-200"} px-3 py-2 cursor-pointer transition-colors rounded-2xl`}
+                  className={`flex items-center justify-start bg-green-200 px-3 py-2 cursor-pointer transition-colors rounded-2xl`}
                   onClick={() => {
                     setCheckboxStates((prev) => ({
                       ...prev,
@@ -558,7 +558,7 @@ export default function Hero() {
                 </div>
 
                 <div
-                  className={`flex items-center justify-start ${checkboxStates.referral ? "bg-purple-200" : "bg-purple-100 hover:bg-purple-200"} px-3 py-2 cursor-pointer transition-colors rounded-2xl`}
+                  className={`flex items-center justify-start bg-purple-200 px-3 py-2 cursor-pointer transition-colors rounded-2xl`}
                   onClick={() => {
                     setCheckboxStates((prev) => ({
                       ...prev,
@@ -580,7 +580,7 @@ export default function Hero() {
                 </div>
 
                 <div
-                  className={`flex items-center justify-start ${checkboxStates.open ? "bg-yellow-200" : "bg-yellow-100 hover:bg-yellow-200"} px-3 py-2 cursor-pointer transition-colors rounded-2xl`}
+                  className={`flex items-center justify-start bg-yellow-200 px-3 py-2 cursor-pointer transition-colors rounded-2xl`}
                   onClick={() => {
                     setCheckboxStates((prev) => ({
                       ...prev,
