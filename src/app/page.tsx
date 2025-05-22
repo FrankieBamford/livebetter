@@ -1,4 +1,4 @@
-'use server';
+"use server";
 
 import Footer from "@/components/footer";
 import Hero from "@/components/hero";
@@ -8,20 +8,20 @@ import { createClient } from "@/utils/supabase/server";
 import Link from "next/link";
 import Image from "next/image";
 import NearbyServices from "@/components/nearby-services";
-import { cookies } from 'next/headers'
+import { cookies } from "next/headers";
 
 export default async function Home() {
-  const cookieStore = await cookies()
-  const supabase = createClient(cookieStore)
+  const cookieStore = await cookies();
+  const supabase = createClient(cookieStore);
 
-  const { data: providers } = await supabase.from('providers').select()
+  const { data: providers } = await supabase.from("providers").select();
 
   return (
     <main className="flex min-h-screen flex-col">
       <Navbar />
       <Hero />
-      <NearbyServices />
+      <NearbyServices className="bg-[#70cc16]" />
       <Footer />
     </main>
-  )
+  );
 }
