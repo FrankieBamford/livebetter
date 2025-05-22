@@ -10,8 +10,11 @@ import {
   Check,
   ChevronDown,
   MapPin,
+  Search,
 } from "lucide-react";
 import { createClient } from "../../supabase/client";
+import { useSupabaseDropdowns } from '@/hooks/useSupabaseDropdowns';
+import MultiSelectDropdown from './MultiSelectDropdown';
 
 interface Category {
   id: number;
@@ -76,6 +79,20 @@ export default function Hero() {
   const serviceTypeDropdownRef = useRef<HTMLDivElement>(null);
 
   const supabase = createClient();
+
+  const { supportNeeded, supportTypes, retryFetch } = useSupabaseDropdowns();
+
+  useEffect(() => {
+    console.log('Dropdown Data:', {
+      supportNeeded: supportNeeded.options,
+      supportTypes: supportTypes.options
+    })
+  }, [supportNeeded, supportTypes])
+
+  const [selections, setSelections] = useState({
+    supportNeeded: [] as string[],
+    supportTypes: [] as string[],
+  });
 
   useEffect(() => {
     async function fetchCategories() {
@@ -332,180 +349,112 @@ export default function Hero() {
     }
   };
 
+  const handleSearch = () => {
+    console.log('Search with:', {
+      selections,
+      location: locationInput,
+      keyword: searchInput,
+      filters: checkboxStates,
+      rating: ratingValue
+    });
+  };
+
   return (
     <div className="relative bg-[#F7EFE2] py-16 border-[#0B6445]">
       <div className="container mx-auto px-4">
         <div className="flex flex-col items-center justify-center text-center">
           <div className="mx-auto mb-8 max-w-5xl w-fit">
-            <h1 className="text-3xl md:text-4xl font-bold text-livebetter mb-4 text-[004B2A] text-[0B6445] text-[#0b6344]">
+            <h1 className="text-3xl md:text-4xl font-bold text-[#0b6344] mb-4">
               Find Mental Health & Wellness Services
             </h1>
 
             <p className="text-lg mb-8 max-w-2xl mx-auto font-semibold text-[#004B2A]">
-              Connect with the right support across the UK for your wellbeing
-              journey
+              Connect with the right support across the UK for your wellbeing journey
             </p>
 
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+              <div className="relative z-30">
+                <MultiSelectDropdown
+                  options={supportNeeded.options}
+                  placeholder="What are you struggling with?"
+                  loading={supportNeeded.loading}
+                  error={supportNeeded.error}
+                  selectedValues={selections.supportNeeded}
+                  onSelectionChange={(values) => {
+                    console.log('Selected support needs:', values)
+                    setSelections(prev => ({ ...prev, supportNeeded: values }))
+                  }}
+                  onRetry={retryFetch}
+                />
+              </div>
+
+              <div className="relative z-20">
+                <MultiSelectDropdown
+                  options={supportTypes.options}
+                  placeholder="What type of support?"
+                  loading={supportTypes.loading}
+                  error={supportTypes.error}
+                  selectedValues={selections.supportTypes}
+                  onSelectionChange={(values) => {
+                    console.log('Support Types Selection:', values)
+                    setSelections(prev => ({ ...prev, supportTypes: values }))
+                  }}
+                  onRetry={retryFetch}
+                />
+              </div>
+
               <div className="relative">
-                <input
-                  type="text"
-                  placeholder="Search by keywords"
-                  className="w-full px-10 py-2 rounded-md bg-[#F8EFE2] border-[#004B2A] border-2"
-                  value={searchInput}
-                  onChange={handleSearchInputChange}
-                  onFocus={() =>
-                    searchInput.length >= 2 && setIsSearchDropdownOpen(true)
-                  }
-                  ref={searchInputRef}
-                />
-                <svg
-                  className="absolute left-3 top-3 h-4 w-4 text-gray-400"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                <div className="relative">
+                  <input
+                    type="text"
+                    placeholder="Search by keywords"
+                    className="w-full px-10 py-2 text-left bg-[#F8EFE2] border-2 border-[#004B2A] rounded-lg"
+                    value={searchInput}
+                    onChange={(e) => setSearchInput(e.target.value)}
                   />
-                </svg>
-                {isSearchDropdownOpen && (
-                  <div
-                    className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-y-auto"
-                    ref={searchDropdownRef}
-                  >
-                    {isLoadingSearchSuggestions ? (
-                      <div className="px-4 py-2 text-sm text-gray-500">
-                        Loading suggestions...
-                      </div>
-                    ) : searchSuggestions.length > 0 ? (
-                      searchSuggestions.map((suggestion, index) => (
-                        <div
-                          key={index}
-                          className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm"
-                          onClick={() => selectSearchSuggestion(suggestion)}
-                        >
-                          {suggestion}
-                        </div>
-                      ))
-                    ) : searchInput.length >= 2 ? (
-                      <div className="px-4 py-2 text-sm text-gray-500">
-                        No suggestions found
-                      </div>
-                    ) : (
-                      <div className="px-4 py-2 text-sm text-gray-500">
-                        Type at least 2 characters
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-
-              <div className="relative bg-[#F8EFE2]">
-                <div
-                  className="w-full px-10 py-2 rounded-md flex justify-between items-center cursor-pointer border-[#004B2A] border-2 bg-[#F8EFE2]"
-                  onClick={toggleDropdown}
-                  ref={categoryButtonRef}
-                >
-                  <span>Support Type</span>
-                  <ChevronDown className="h-4 w-4 text-[gray-400] text-[#000000]" />
+                  <Search className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
                 </div>
-
-                {isDropdownOpen && (
-                  <div
-                    className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-y-auto"
-                    ref={categoryDropdownRef}
-                  >
-                    {categories.map((category) => (
-                      <div
-                        key={category.id}
-                        className="px-4 py-2 hover:bg-gray-100 flex items-center justify-between cursor-pointer"
-                        onClick={() => toggleCategory(category.id)}
-                      >
-                        <span>{category.label}</span>
-                        {selectedCategories.includes(category.id) && (
-                          <Check className="h-4 w-4 text-[#FF5000]" />
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                )}
               </div>
 
-              <div className="relative flex bg-[ #F8EFE2] bg-[#F8EFE2] border-[#004B2A] border-2 rounded-lg text-right text-base font-normal text-black">
-                <input
-                  type="text"
-                  placeholder="Enter location"
-                  className="w-full px-10 py-2 border border-gray-200 rounded-md bg-[#F8EFE2] text-[#000000] font-normal"
-                  value={locationInput}
-                  onChange={handleLocationInputChange}
-                  onFocus={() =>
-                    locationInput.length > 0 && setIsLocationDropdownOpen(true)
-                  }
-                  ref={locationInputRef}
-                />
-                <MapPin className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+              <div className="relative">
+                <div className="relative">
+                  <input
+                    type="text"
+                    placeholder="Enter location"
+                    className="w-full px-10 py-2 text-left bg-[#F8EFE2] border-2 border-[#004B2A] rounded-lg"
+                    value={locationInput}
+                    onChange={handleLocationInputChange}
+                    onFocus={() => locationInput.length >= 3 && setIsLocationDropdownOpen(true)}
+                  />
+                  <MapPin className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
+                </div>
 
                 {isLocationDropdownOpen && (
-                  <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-y-auto">
+                  <div className="absolute z-50 w-full mt-1 bg-white border-2 border-[#004B2A] rounded-lg shadow-lg">
                     {isLoadingSuggestions ? (
-                      <div className="px-4 py-2 text-sm text-gray-500">
-                        Loading suggestions...
+                      <div className="p-4 text-center">
+                        <div className="animate-pulse space-y-2">
+                          <div className="h-4 bg-gray-200 rounded"></div>
+                          <div className="h-4 bg-gray-200 rounded"></div>
+                        </div>
                       </div>
                     ) : locationSuggestions.length > 0 ? (
-                      locationSuggestions.map((suggestion) => (
-                        <div
-                          key={suggestion.place_id}
-                          className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm"
-                          onClick={() => selectLocation(suggestion)}
-                        >
-                          {suggestion.display_name}
-                        </div>
-                      ))
-                    ) : locationInput.length > 2 ? (
-                      <div className="px-4 py-2 text-sm text-gray-500">
+                      <ul className="max-h-60 overflow-auto">
+                        {locationSuggestions.map((suggestion) => (
+                          <li
+                            key={suggestion.place_id}
+                            className="px-4 py-2 cursor-pointer hover:bg-[rgba(0,75,42,0.1)]"
+                            onClick={() => selectLocation(suggestion)}
+                          >
+                            {suggestion.display_name}
+                          </li>
+                        ))}
+                      </ul>
+                    ) : locationInput.length >= 3 ? (
+                      <div className="p-4 text-center text-gray-500">
                         No locations found
                       </div>
-                    ) : (
-                      <div className="px-4 py-2 text-sm text-gray-500">
-                        Type at least 3 characters
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-
-              <div className="relative">
-                <div
-                  className="w-full px-10 py-2 rounded-md flex justify-between items-center cursor-pointer bg-[#F8EFE2] border-[#004B2A] border-2"
-                  onClick={toggleServiceTypeDropdown}
-                  ref={serviceTypeButtonRef}
-                >
-                  <span>{getSelectedServiceTypesText()}</span>
-                  <ChevronDown className="h-4 w-4 text-[#000000]" />
-                </div>
-
-                {isServiceTypeDropdownOpen && (
-                  <div
-                    className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-y-auto"
-                    ref={serviceTypeDropdownRef}
-                  >
-                    {serviceTypes.map((serviceType) => (
-                      <div
-                        key={serviceType.id}
-                        className="px-4 py-2 hover:bg-gray-100 flex items-center justify-between cursor-pointer"
-                        onClick={() => toggleServiceType(serviceType.id)}
-                      >
-                        <span>{serviceType.name}</span>
-                        {selectedServiceTypes.includes(serviceType.id) && (
-                          <Check className="h-4 w-4 text-livebetter-orange" />
-                        )}
-                      </div>
-                    ))}
+                    ) : null}
                   </div>
                 )}
               </div>
@@ -622,7 +571,10 @@ export default function Hero() {
               </div>
 
               <div className="mt-6 flex justify-center">
-                <button className="px-8 py-3 bg-[#FF5000] text-white font-medium rounded-md hover:bg-[#cc4001] hover:text-white transform hover:scale-105 transition-all duration-200">
+                <button
+                  onClick={handleSearch}
+                  className="px-8 py-3 bg-[#FF5000] text-white font-medium rounded-md hover:bg-[#cc4001] hover:text-white transform hover:scale-105 transition-all duration-200"
+                >
                   Search Services
                 </button>
               </div>
