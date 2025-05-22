@@ -9,18 +9,21 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      categories: {
+      "Challenge/Condition_Category": {
         Row: {
+          common_search_examples: string | null
           id: number
           name: string
           slug: string | null
         }
         Insert: {
+          common_search_examples?: string | null
           id?: number
           name: string
           slug?: string | null
         }
         Update: {
+          common_search_examples?: string | null
           id?: number
           name?: string
           slug?: string | null
@@ -29,25 +32,27 @@ export type Database = {
       }
       provider_categories: {
         Row: {
-          category_id: number
-          provider_id: string
+          category_id: number | null
+          created_at: string | null
+          id: number
+          modified_at: string | null
+          provider_id: number | null
         }
         Insert: {
-          category_id: number
-          provider_id: string
+          category_id?: number | null
+          created_at?: string | null
+          id?: never
+          modified_at?: string | null
+          provider_id?: number | null
         }
         Update: {
-          category_id?: number
-          provider_id?: string
+          category_id?: number | null
+          created_at?: string | null
+          id?: never
+          modified_at?: string | null
+          provider_id?: number | null
         }
         Relationships: [
-          {
-            foreignKeyName: "provider_categories_category_id_fkey"
-            columns: ["category_id"]
-            isOneToOne: false
-            referencedRelation: "categories"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "provider_categories_provider_id_fkey"
             columns: ["provider_id"]
@@ -64,15 +69,15 @@ export type Database = {
           email: string
           google_rating: number[] | null
           google_reviews_count: number | null
-          id: string
+          id: number
           is_online: boolean | null
           is_verified: boolean | null
-          latitiude: number | null
+          latitude: number | null
           live_rating: number | null
           live_reviews_count: number | null
           location: string
           logo_url: string | null
-          longatude: number | null
+          longitude: number | null
           modified_at: string | null
           name: string
           open_now: boolean | null
@@ -88,15 +93,15 @@ export type Database = {
           email: string
           google_rating?: number[] | null
           google_reviews_count?: number | null
-          id?: string
+          id?: never
           is_online?: boolean | null
           is_verified?: boolean | null
-          latitiude?: number | null
+          latitude?: number | null
           live_rating?: number | null
           live_reviews_count?: number | null
           location: string
           logo_url?: string | null
-          longatude?: number | null
+          longitude?: number | null
           modified_at?: string | null
           name: string
           open_now?: boolean | null
@@ -112,15 +117,15 @@ export type Database = {
           email?: string
           google_rating?: number[] | null
           google_reviews_count?: number | null
-          id?: string
+          id?: never
           is_online?: boolean | null
           is_verified?: boolean | null
-          latitiude?: number | null
+          latitude?: number | null
           live_rating?: number | null
           live_reviews_count?: number | null
           location?: string
           logo_url?: string | null
-          longatude?: number | null
+          longitude?: number | null
           modified_at?: string | null
           name?: string
           open_now?: boolean | null
@@ -156,26 +161,29 @@ export type Database = {
             foreignKeyName: "service_subtypes_service_type_id_fkey"
             columns: ["service_type_id"]
             isOneToOne: false
-            referencedRelation: "service_types"
+            referencedRelation: "service_types_categories"
             referencedColumns: ["id"]
           },
         ]
       }
-      service_types: {
+      service_types_categories: {
         Row: {
-          description: string | null
+          examples: string | null
           id: number
           name: string
+          slug: string | null
         }
         Insert: {
-          description?: string | null
+          examples?: string | null
           id?: number
           name: string
+          slug?: string | null
         }
         Update: {
-          description?: string | null
+          examples?: string | null
           id?: number
           name?: string
+          slug?: string | null
         }
         Relationships: []
       }
