@@ -114,13 +114,15 @@ const recentDiscussions = [
 
 export default function CommunityPage() {
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen">
       <Navbar />
-      <div className="bg-[#F7EFE2] py-16">
+      <div className="bg-[#F6EDE1] py-16">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <h1 className="text-4xl font-bold mb-4">Community Forum</h1>
-            <p className="text-gray-600 max-w-2xl mx-auto">
+            <h1 className="text-4xl font-bold mb-4 text-[#045842]">
+              Community Forum
+            </h1>
+            <p className="text-gray-700 max-w-2xl mx-auto">
               Connect with others, share experiences, and find support in our
               moderated community spaces. All discussions are guided by our
               community values of respect, empathy, and hope.
@@ -232,17 +234,17 @@ export default function CommunityPage() {
             </Tabs>
           </div>
 
-          <div className="bg-white rounded-lg shadow-sm p-6 mb-12">
-            <h2 className="text-2xl font-semibold mb-4">
+          <div className="bg-[#045842] rounded-lg shadow-sm p-6 mb-12">
+            <h2 className="text-2xl font-semibold mb-4 text-[#F6EDE1]">
               Community Guidelines
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <h3 className="font-medium text-lg mb-2 flex items-center">
+                <h3 className="font-medium text-lg mb-2 flex items-center text-[#F6EDE1]">
                   <Shield className="mr-2 h-5 w-5 text-orange-500" />
                   Our Values
                 </h3>
-                <ul className="list-disc pl-5 space-y-2 text-gray-600">
+                <ul className="list-disc pl-5 space-y-2 text-[#F6EDE1]/90">
                   <li>Respect everyone's experiences and perspectives</li>
                   <li>Maintain confidentiality and privacy</li>
                   <li>Focus on support rather than diagnosis</li>
@@ -251,11 +253,11 @@ export default function CommunityPage() {
                 </ul>
               </div>
               <div>
-                <h3 className="font-medium text-lg mb-2 flex items-center">
+                <h3 className="font-medium text-lg mb-2 flex items-center text-[#F6EDE1]">
                   <AlertCircle className="mr-2 h-5 w-5 text-orange-500" />
                   Important Reminders
                 </h3>
-                <ul className="list-disc pl-5 space-y-2 text-gray-600">
+                <ul className="list-disc pl-5 space-y-2 text-[#F6EDE1]/90">
                   <li>This forum is moderated but not monitored 24/7</li>
                   <li>For crisis support, please use our crisis resources</li>
                   <li>
@@ -276,12 +278,12 @@ export default function CommunityPage() {
             </div>
           </div>
 
-          <div className="bg-[#F7EFE2] rounded-lg shadow-sm p-6 bg-[racing green]">
+          <div className="bg-[#F6EDE1] rounded-lg shadow-sm p-6">
             <div className="text-center">
-              <h2 className="text-2xl font-semibold mb-4">
+              <h2 className="text-2xl font-semibold mb-4 text-[#045842]">
                 Ready to Join the Conversation?
               </h2>
-              <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
+              <p className="text-gray-700 mb-6 max-w-2xl mx-auto">
                 Create an account to participate in discussions, save helpful
                 resources, and connect with a supportive community on your
                 mental health journey.

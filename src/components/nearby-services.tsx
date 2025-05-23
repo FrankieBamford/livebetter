@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { MapPin, Phone, Mail } from "lucide-react";
 import Link from "next/link";
 import LocationConsent from "./location-consent";
+import { createClient } from "@/utils/supabase/client";
 
 interface Service {
   id: number;
@@ -16,95 +17,7 @@ interface Service {
   image: string;
 }
 
-// Mock data for services
-const mockServices: Service[] = [
-  {
-    id: 1,
-    name: "Wellness Together",
-    description:
-      "Community-focused wellness center offering group support and meditation classes.",
-    categories: ["Support Group", "Meditation"],
-    location: "Manchester, UK",
-    rating: 4.5,
-    image: "/images/wellnesstogether.png",
-  },
-  {
-    id: 2,
-    name: "Mind & Body Therapy",
-    description:
-      "Holistic approach to mental health with individual and group therapy sessions.",
-    categories: ["Therapy", "Holistic"],
-    location: "Liverpool, UK",
-    rating: 4.8,
-    image: "/images/mind&bodytherapy.png",
-  },
-  {
-    id: 3,
-    name: "Calm Waters Counseling",
-    description:
-      "Professional counseling services for anxiety, depression, and relationship issues.",
-    categories: ["Counseling", "Anxiety"],
-    location: "Birmingham, UK",
-    rating: 4.2,
-    image:
-      "https://images.unsplash.com/photo-1573497620053-ea5300f94f21?w=800&q=80",
-  },
-  {
-    id: 4,
-    name: "Mindful Recovery Center",
-    description:
-      "Specialized programs for addiction recovery using mindfulness techniques.",
-    categories: ["Recovery", "Mindfulness"],
-    location: "Leeds, UK",
-    rating: 4.7,
-    image:
-      "https://images.unsplash.com/photo-1516574187841-cb9cc2ca948b?w=800&q=80",
-  },
-  {
-    id: 5,
-    name: "Serenity Wellness Spa",
-    description:
-      "Combines mental health support with relaxation techniques and spa treatments.",
-    categories: ["Wellness", "Relaxation"],
-    location: "Bristol, UK",
-    rating: 4.6,
-    image:
-      "https://images.unsplash.com/photo-1519823551278-64ac92734fb1?w=800&q=80",
-  },
-  {
-    id: 6,
-    name: "Harmony Mental Health",
-    description:
-      "Comprehensive mental health services with a focus on long-term wellbeing.",
-    categories: ["Mental Health", "Therapy"],
-    location: "Sheffield, UK",
-    rating: 4.3,
-    image:
-      "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=800&q=80",
-  },
-  {
-    id: 7,
-    name: "Balance Life Coaching",
-    description:
-      "Professional life coaching to help achieve personal and professional goals.",
-    categories: ["Coaching", "Personal Development"],
-    location: "Newcastle, UK",
-    rating: 4.4,
-    image:
-      "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=800&q=80",
-  },
-  {
-    id: 8,
-    name: "Inner Peace Meditation",
-    description:
-      "Guided meditation sessions and mindfulness training for stress reduction.",
-    categories: ["Meditation", "Mindfulness"],
-    location: "Glasgow, UK",
-    rating: 4.9,
-    image:
-      "https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=800&q=80",
-  },
-];
+// We'll fetch services from Supabase instead of using mock data
 
 // Function to calculate distance between two coordinates using Haversine formula
 function calculateDistance(
@@ -150,6 +63,7 @@ export default function NearbyServices() {
     lon: number;
   } | null>(null);
   const [locationAccepted, setLocationAccepted] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   // Handle when user accepts location sharing
   const handleLocationAccept = (position: GeolocationPosition) => {
@@ -164,40 +78,76 @@ export default function NearbyServices() {
   };
 
   useEffect(() => {
-    // Show initial services immediately
-    setServices(mockServices.slice(0, 4));
+    const fetchServices = async () => {
+      setLoading(true);
+      try {
+        const supabase = createClient();
+        const { data, error } = await supabase.from("providers").select("*");
 
-    if (userLocation) {
-      // Sort services by distance from user if location is available
-      const servicesWithDistance = mockServices.map((service) => {
-        const coords = cityCoordinates[service.location] || {
-          lat: 51.5074,
-          lon: -0.1278,
-        };
+        if (error) {
+          console.error("Error fetching services:", error);
+          return;
+        }
 
-        const distance = calculateDistance(
-          userLocation.lat,
-          userLocation.lon,
-          coords.lat,
-          coords.lon,
-        );
+        // Transform the data to match the expected format if needed
+        const transformedData =
+          data?.map((provider) => ({
+            id: provider.id,
+            name: provider.name,
+            description: provider.description || "",
+            categories: provider.categories || [],
+            location: provider.location || "",
+            rating: provider.rating || 0,
+            image:
+              provider.image ||
+              "https://images.unsplash.com/photo-1573497620053-ea5300f94f21?w=800&q=80",
+          })) || [];
 
-        return {
-          ...service,
-          distance,
-        };
-      });
+        if (userLocation) {
+          // Sort services by distance from user if location is available
+          const servicesWithDistance = transformedData.map((service) => {
+            const coords = cityCoordinates[service.location] || {
+              lat: 51.5074,
+              lon: -0.1278,
+            };
 
-      const sortedServices = servicesWithDistance
-        .sort((a, b) => (a.distance || Infinity) - (b.distance || Infinity))
-        .slice(0, 4);
+            const distance = calculateDistance(
+              userLocation.lat,
+              userLocation.lon,
+              coords.lat,
+              coords.lon,
+            );
 
-      setServices(sortedServices);
-    }
+            return {
+              ...service,
+              distance,
+            };
+          });
+
+          const sortedServices = servicesWithDistance
+            .sort((a, b) => (a.distance || Infinity) - (b.distance || Infinity))
+            .slice(0, 4);
+
+          setServices(sortedServices);
+        } else {
+          // If no location, just show the first 4 services
+          setServices(transformedData.slice(0, 4));
+        }
+      } catch (error) {
+        console.error("Failed to fetch services:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchServices();
   }, [userLocation]);
 
   return (
-    <div className="bg-[#045741] px-7 py-8">
+    <div className="bg-[#045741] px-8 py-8">
+      <h2 className="text-3xl font-bold text-center pb-8 text-[#F6EDE1]">
+        Support Near You
+      </h2>
       {/* Optional location consent - only show if services are not yet sorted by distance */}
       {!userLocation && (
         <div className="mb-8 text-center">
@@ -207,7 +157,7 @@ export default function NearbyServices() {
           />
         </div>
       )}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 p-16">
         {services.map((service) => (
           <div
             key={service.id}
@@ -280,7 +230,7 @@ export default function NearbyServices() {
                 </div>
 
                 <Link
-                  href={`#service-${service.id}`}
+                  href={`/service/${service.id}`}
                   className="px-4 py-2 bg-[#3A3FC1] text-white text-sm font-medium rounded-md hover:bg-[#2e32a6] hover:text-white transform hover:scale-105 transition-all duration-200"
                 >
                   View Listing
@@ -290,10 +240,13 @@ export default function NearbyServices() {
           </div>
         ))}
       </div>
-      <div className="mt-12 text-center">
-        <button className="px-6 py-3 text-livebetter font-medium rounded-md hover:bg-[#EDE1CF] transform hover:scale-105 transition-all duration-200 bg-[#F8EFE2]">
+      <div className="mt-16 text-center">
+        <Link
+          href="/directory"
+          className="inline-block px-8 py-4 text-livebetter font-medium rounded-md hover:bg-[#EDE1CF] transform hover:scale-105 transition-all duration-200 bg-[#F8EFE2]"
+        >
           Load More Services
-        </button>
+        </Link>
       </div>
     </div>
   );
