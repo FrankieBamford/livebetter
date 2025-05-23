@@ -1,3 +1,4 @@
+"use client";
 // components/ProviderMediaUpload.jsx
 import React, { useState, useEffect } from 'react';
 import { Upload, X, Play, ImageIcon, Loader2 } from 'lucide-react';

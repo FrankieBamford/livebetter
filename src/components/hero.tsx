@@ -53,10 +53,8 @@ export default function Hero() {
 
   // Search state
   const [searchInput, setSearchInput] = useState("");
-  const [searchSuggestions, setSearchSuggestions] = useState<string[]>([]);
-  const [isSearchDropdownOpen, setIsSearchDropdownOpen] = useState(false);
-  const [isLoadingSearchSuggestions, setIsLoadingSearchSuggestions] =
-    useState(false);
+  const [predictiveText, setPredictiveText] = useState("");
+  const [isLoadingSearchSuggestions, setIsLoadingSearchSuggestions] = useState(false);
   const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Location search state
@@ -69,8 +67,6 @@ export default function Hero() {
   const locationTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Refs for click outside functionality
-  const searchInputRef = useRef<HTMLInputElement>(null);
-  const searchDropdownRef = useRef<HTMLDivElement>(null);
   const categoryButtonRef = useRef<HTMLDivElement>(null);
   const categoryDropdownRef = useRef<HTMLDivElement>(null);
   const locationInputRef = useRef<HTMLInputElement>(null);
@@ -89,64 +85,62 @@ export default function Hero() {
     });
   }, [supportNeeded, supportTypes]);
 
+  // Debug checkboxStates changes
+  useEffect(() => {
+    console.log("checkboxStates changed:", checkboxStates);
+  }, [checkboxStates]);
+
   const [selections, setSelections] = useState({
     supportNeeded: [] as string[],
     supportTypes: [] as string[],
   });
 
   useEffect(() => {
-    async function fetchCategories() {
-      try {
-        const { data, error } = await supabase
-          .from("categories")
-          .select("*")
-          .order("label");
+    // Temporarily disabled due to table access issues
+    // async function fetchCategories() {
+    //   try {
+    //     const { data, error } = await supabase
+    //       .from("provider_categories")
+    //       .select("*")
+    //       .order("label");
 
-        if (error) {
-          console.error("Error fetching categories:", error);
-          return;
-        }
+    //     if (error) {
+    //       console.error("Error fetching categories:", error);
+    //       return;
+    //     }
 
-        setCategories(data || []);
-      } catch (error) {
-        console.error("Failed to fetch categories:", error);
-      }
-    }
+    //     setCategories(data || []);
+    //   } catch (error) {
+    //     console.error("Failed to fetch categories:", error);
+    //   }
+    // }
 
-    async function fetchServiceTypes() {
-      try {
-        const { data, error } = await supabase
-          .from("service_types")
-          .select("*")
-          .order("name");
+    // async function fetchServiceTypes() {
+    //   try {
+    //     const { data, error } = await supabase
+    //       .from("service_type")
+    //       .select("*")
+    //       .order("name");
 
-        if (error) {
-          console.error("Error fetching service types:", error);
-          return;
-        }
+    //     if (error) {
+    //       console.error("Error fetching service types:", error);
+    //       return;
+    //     }
 
-        setServiceTypes(data || []);
-      } catch (error) {
-        console.error("Failed to fetch service types:", error);
-      }
-    }
+    //     setServiceTypes(data || []);
+    //   } catch (error) {
+    //     console.error("Failed to fetch service types:", error);
+    //   }
+    // }
 
-    fetchCategories();
-    fetchServiceTypes();
+    // fetchCategories();
+    // fetchServiceTypes();
+    
+    console.log("Database fetches temporarily disabled for testing");
   }, [supabase]);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      // Check if the click was outside the search input and its dropdown
-      if (
-        searchInputRef.current &&
-        !searchInputRef.current.contains(event.target as Node) &&
-        searchDropdownRef.current &&
-        !searchDropdownRef.current.contains(event.target as Node)
-      ) {
-        setIsSearchDropdownOpen(false);
-      }
-
       // Check if the click was outside the category button and its dropdown
       if (
         categoryButtonRef.current &&
@@ -186,7 +180,6 @@ export default function Hero() {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [
-    isSearchDropdownOpen,
     isDropdownOpen,
     isLocationDropdownOpen,
     isServiceTypeDropdownOpen,
@@ -195,7 +188,6 @@ export default function Hero() {
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
     // Close other dropdowns when category dropdown is opened
-    setIsSearchDropdownOpen(false);
     setIsLocationDropdownOpen(false);
     setIsServiceTypeDropdownOpen(false);
   };
@@ -203,7 +195,6 @@ export default function Hero() {
   const toggleServiceTypeDropdown = () => {
     setIsServiceTypeDropdownOpen(!isServiceTypeDropdownOpen);
     // Close other dropdowns when service type dropdown is opened
-    setIsSearchDropdownOpen(false);
     setIsDropdownOpen(false);
     setIsLocationDropdownOpen(false);
   };
@@ -235,6 +226,7 @@ export default function Hero() {
   const handleSearchInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setSearchInput(value);
+    setPredictiveText("");
 
     if (searchTimeoutRef.current) {
       clearTimeout(searchTimeoutRef.current);
@@ -242,42 +234,83 @@ export default function Hero() {
 
     if (value.length >= 2) {
       setIsLoadingSearchSuggestions(true);
-      setIsSearchDropdownOpen(true);
 
       searchTimeoutRef.current = setTimeout(async () => {
         try {
-          // Fetch search suggestions from Supabase
+          // Fetch providers to build keyword dictionary
           const { data, error } = await supabase
-            .from("services")
-            .select("name")
-            .ilike("name", `%${value}%`)
-            .limit(10);
+            .from("providers")
+            .select("name, description")
+            .limit(100); // Get more providers to build better keyword dictionary
 
           if (error) {
-            console.error("Error fetching search suggestions:", error);
-            setSearchSuggestions([]);
+            console.error("Error fetching providers for keywords:", error);
+            setPredictiveText("");
             return;
           }
 
-          // Extract names from the results
-          const suggestions = data.map((item) => item.name);
-          setSearchSuggestions(suggestions);
+          // Build word dictionary from all provider names and descriptions
+          const allWords = new Set<string>();
+          
+          data?.forEach(provider => {
+            // Add words from provider name
+            const nameWords = provider.name.toLowerCase()
+              .replace(/[^\w\s]/g, ' ') // Replace punctuation with spaces
+              .split(/\s+/)
+              .filter((word: string) => word.length >= 3); // Only words 3+ characters
+            
+            nameWords.forEach((word: string) => allWords.add(word));
+            
+            // Add words from provider description
+            if (provider.description) {
+              const descWords = provider.description.toLowerCase()
+                .replace(/[^\w\s]/g, ' ')
+                .split(/\s+/)
+                .filter((word: string) => word.length >= 3);
+              
+              descWords.forEach((word: string) => allWords.add(word));
+            }
+          });
+
+          // Find the best word completion for the current input
+          const currentWord = value.toLowerCase().trim();
+          const matchingWords = Array.from(allWords)
+            .filter(word => word.startsWith(currentWord) && word !== currentWord)
+            .sort((a, b) => a.length - b.length); // Prefer shorter completions
+
+          if (matchingWords.length > 0) {
+            setPredictiveText(matchingWords[0]);
+          }
         } catch (error) {
-          console.error("Error generating search suggestions:", error);
-          setSearchSuggestions([]);
+          console.error("Error generating keyword suggestions:", error);
+          setPredictiveText("");
         } finally {
           setIsLoadingSearchSuggestions(false);
         }
       }, 300);
     } else {
-      setSearchSuggestions([]);
-      setIsSearchDropdownOpen(false);
+      setPredictiveText("");
     }
   };
 
-  const selectSearchSuggestion = (suggestion: string) => {
-    setSearchInput(suggestion);
-    setIsSearchDropdownOpen(false);
+  const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Tab" && predictiveText && predictiveText !== searchInput) {
+      e.preventDefault();
+      setSearchInput(predictiveText);
+      setPredictiveText("");
+    } else if (e.key === "Enter") {
+      e.preventDefault();
+      if (predictiveText && predictiveText !== searchInput) {
+        // If there's a prediction, use it first then search
+        setSearchInput(predictiveText);
+        setPredictiveText("");
+        // Delay search slightly to allow state to update
+        setTimeout(() => handleSearch(), 100);
+      } else {
+        // Otherwise, perform the search immediately
+        handleSearch();
+      }
+    }
   };
 
   const handleLocationInputChange = (
@@ -446,9 +479,36 @@ export default function Hero() {
                     placeholder="Search by keywords"
                     className="w-full px-10 py-2 text-left bg-[#F8EFE2] border-2 border-[#004B2A] rounded-lg"
                     value={searchInput}
-                    onChange={(e) => setSearchInput(e.target.value)}
+                    onChange={handleSearchInputChange}
+                    onKeyDown={handleSearchKeyDown}
                   />
-                  <Search className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
+                  {/* Predictive text overlay */}
+                  {predictiveText && predictiveText !== searchInput && searchInput.length > 0 && (
+                    <div 
+                      className="absolute pointer-events-none flex items-center"
+                      style={{
+                        left: '42px',   // Adjust this to move the text left/right
+                        top: '2px',     // Adjust this to move the text up/down
+                        paddingTop: '8px',
+                        paddingBottom: '8px'
+                      }}
+                    >
+                      <span className="text-transparent select-none">{searchInput}</span>
+                      <span className="text-gray-400">{predictiveText.substring(searchInput.length)}</span>
+                    </div>
+                  )}
+                  <Search className="absolute left-3 top-3.5 h-4 w-4 text-gray-400" />
+                  {predictiveText && predictiveText !== searchInput && searchInput.length > 0 && (
+                    <div 
+                      className="absolute pointer-events-none text-xs text-gray-400"
+                      style={{
+                        right: '10px',  // Adjust this value to move left/right
+                        top: '14px'     // Adjust this value to move up/down
+                      }}
+                    >
+                      Tab to complete
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -465,7 +525,7 @@ export default function Hero() {
                       setIsLocationDropdownOpen(true)
                     }
                   />
-                  <MapPin className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
+                  <MapPin className="absolute left-3 top-3.5 h-4 w-4 text-gray-400" />
                 </div>
 
                 {isLocationDropdownOpen && (
@@ -502,12 +562,21 @@ export default function Hero() {
             <div className="bg-[#F7EFE2] rounded-lg p-4 md:p-6 flex flex-col items-center justify-center w-full max-w-6xl mx-auto">
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 mb-6 w-full px-0">
                 <div
-                  className={`flex items-center justify-start bg-blue-200 px-3 py-2 cursor-pointer transition-colors rounded-2xl`}
+                  className={`flex items-center justify-start px-3 py-2 cursor-pointer transition-all duration-200 rounded-2xl ${
+                    checkboxStates.online 
+                      ? 'bg-blue-300 hover:bg-blue-300' 
+                      : 'bg-blue-200 hover:bg-blue-300'
+                  }`}
                   onClick={() => {
-                    setCheckboxStates((prev) => ({
-                      ...prev,
-                      online: !prev.online,
-                    }));
+                    console.log("Online Services clicked, current state:", checkboxStates.online);
+                    setCheckboxStates((prev) => {
+                      const newState = {
+                        ...prev,
+                        online: !prev.online,
+                      };
+                      console.log("New state will be:", newState);
+                      return newState;
+                    });
                   }}
                 >
                   <input
@@ -524,12 +593,21 @@ export default function Hero() {
                 </div>
 
                 <div
-                  className={`flex items-center justify-start bg-green-200 px-3 py-2 cursor-pointer transition-colors rounded-2xl`}
+                  className={`flex items-center justify-start px-3 py-2 cursor-pointer transition-all duration-200 rounded-2xl ${
+                    checkboxStates.free 
+                      ? 'bg-green-300 hover:bg-green-300' 
+                      : 'bg-green-200 hover:bg-green-300'
+                  }`}
                   onClick={() => {
-                    setCheckboxStates((prev) => ({
-                      ...prev,
-                      free: !prev.free,
-                    }));
+                    console.log("Free Services clicked, current state:", checkboxStates.free);
+                    setCheckboxStates((prev) => {
+                      const newState = {
+                        ...prev,
+                        free: !prev.free,
+                      };
+                      console.log("New state will be:", newState);
+                      return newState;
+                    });
                   }}
                 >
                   <input
@@ -546,12 +624,21 @@ export default function Hero() {
                 </div>
 
                 <div
-                  className={`flex items-center justify-start bg-purple-200 px-3 py-2 cursor-pointer transition-colors rounded-2xl`}
+                  className={`flex items-center justify-start px-3 py-2 cursor-pointer transition-all duration-200 rounded-2xl ${
+                    checkboxStates.referral 
+                      ? 'bg-purple-300 hover:bg-purple-300' 
+                      : 'bg-purple-200 hover:bg-purple-300'
+                  }`}
                   onClick={() => {
-                    setCheckboxStates((prev) => ({
-                      ...prev,
-                      referral: !prev.referral,
-                    }));
+                    console.log("Requires Referral clicked, current state:", checkboxStates.referral);
+                    setCheckboxStates((prev) => {
+                      const newState = {
+                        ...prev,
+                        referral: !prev.referral,
+                      };
+                      console.log("New state will be:", newState);
+                      return newState;
+                    });
                   }}
                 >
                   <input
@@ -568,12 +655,21 @@ export default function Hero() {
                 </div>
 
                 <div
-                  className={`flex items-center justify-start bg-yellow-200 px-3 py-2 cursor-pointer transition-colors rounded-2xl`}
+                  className={`flex items-center justify-start px-3 py-2 cursor-pointer transition-all duration-200 rounded-2xl ${
+                    checkboxStates.open 
+                      ? 'bg-yellow-300 hover:bg-yellow-300' 
+                      : 'bg-yellow-200 hover:bg-yellow-300'
+                  }`}
                   onClick={() => {
-                    setCheckboxStates((prev) => ({
-                      ...prev,
-                      open: !prev.open,
-                    }));
+                    console.log("Open Now clicked, current state:", checkboxStates.open);
+                    setCheckboxStates((prev) => {
+                      const newState = {
+                        ...prev,
+                        open: !prev.open,
+                      };
+                      console.log("New state will be:", newState);
+                      return newState;
+                    });
                   }}
                 >
                   <input

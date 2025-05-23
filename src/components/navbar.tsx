@@ -75,12 +75,12 @@ export default function Navbar() {
           >
             About
           </Link>
-          <Button
-            variant="outline"
-            className="px-3 lg:px-4 py-2 text-xs lg:text-sm font-medium bg-[#FF3939] text-white hover:bg-[#cc2e2e] hover:text-white transform hover:scale-105 transition-all duration-200"
+          <Link
+            href="/crisis"
+            className="px-3 lg:px-4 py-2 text-xs lg:text-sm font-medium bg-[#FF3939] text-white hover:bg-[#cc2e2e] hover:text-white transform hover:scale-105 transition-all duration-200 rounded-md"
           >
             Help in a Crisis
-          </Button>
+          </Link>
         </div>
 
         {/* Desktop auth buttons */}
@@ -128,12 +128,13 @@ export default function Navbar() {
             >
               About
             </Link>
-            <Button
-              variant="outline"
-              className="px-4 py-2 text-sm font-medium bg-[#FF3939] text-white hover:bg-[#cc2e2e] hover:text-white w-full"
+            <Link
+              href="/crisis"
+              className="px-4 py-2 text-sm font-medium bg-[#FF3939] text-white hover:bg-[#cc2e2e] hover:text-white w-full text-center rounded-md"
+              onClick={toggleMenu}
             >
               Help in a Crisis
-            </Button>
+            </Link>
             {user ? (
               <Link href="/dashboard" className="w-full" onClick={toggleMenu}>
                 <Button className="w-full">Dashboard</Button>

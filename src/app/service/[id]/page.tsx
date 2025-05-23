@@ -8,80 +8,11 @@ import {
   MapPin,
   Phone,
   Mail,
-  Calendar,
-  Clock,
   Star,
   ExternalLink,
   ArrowLeft,
 } from "lucide-react";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import Image from "next/image";
-import { Card, CardContent } from "@/components/ui/card";
-import React from "react";
-
-async function SimilarServicesSection({
-  providerId,
-  categories,
-  supabase,
-}: {
-  providerId: string;
-  categories: string[];
-  supabase: any;
-}) {
-  const { data: similarServices } = await supabase
-    .from("providers")
-    .select("*")
-    .neq("id", providerId)
-    .in("categories", categories)
-    .limit(3);
-
-  return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-      {similarServices && similarServices.length > 0 ? (
-        similarServices.map((service: any) => (
-          <div
-            key={service.id}
-            className="bg-[#F6EDE1] rounded-lg p-4 shadow-md"
-          >
-            <div className="h-40 rounded-md mb-4 overflow-hidden">
-              <img
-                src={
-                  service.logo_url ||
-                  "https://images.unsplash.com/photo-1573497620053-ea5300f94f21?w=800&q=80"
-                }
-                alt={service.name}
-                className="w-full h-full object-cover"
-              />
-            </div>
-            <h3 className="font-semibold mb-2">{service.name}</h3>
-            <p className="text-sm text-gray-600 mb-4">
-              {service.description?.substring(0, 100)}...
-            </p>
-            <Link
-              href={`/service/${service.id}`}
-              className="text-[#3A3FC1] hover:underline text-sm font-medium"
-            >
-              View Details
-            </Link>
-          </div>
-        ))
-      ) : (
-        <div className="col-span-3 text-center py-8">
-          <p className="text-gray-500">No similar services found</p>
-        </div>
-      )}
-    </div>
-  );
-}
-
-interface Review {
-  id: number;
-  author: string;
-  rating: number;
-  comment: string;
-  date: string;
-}
 
 export default async function ServicePage({
   params,
@@ -91,14 +22,24 @@ export default async function ServicePage({
   const cookieStore = await cookies();
   const supabase = createClient(cookieStore);
 
+  console.log("Service page - Fetching provider with ID:", params.id);
+
   // Fetch the provider data based on the ID
   const { data: provider, error } = await supabase
     .from("providers")
-    .select("*, reviews(*)")
-    .eq("id", params.id)
+    .select("*")
+    .eq("id", parseInt(params.id))
     .single();
 
+  console.log("Service page - Query result:", { 
+    provider, 
+    error, 
+    providerExists: !!provider,
+    errorMessage: error?.message 
+  });
+
   if (error || !provider) {
+    console.error("Service page - Provider not found or error:", error);
     return (
       <main className="flex min-h-screen flex-col bg-[#F6EDE1]">
         <Navbar />
@@ -110,18 +51,15 @@ export default async function ServicePage({
             The service you're looking for doesn't exist or has been removed.
           </p>
           <Link href="/directory">
-            <Button className="bg-[#3A3FC1] hover:bg-[#2e32a6] text-white">
+            <span className="inline-flex items-center justify-center px-4 py-2 bg-[#3A3FC1] hover:bg-[#2e32a6] text-white text-sm font-medium rounded-md transform hover:scale-105 transition-all duration-200">
               <ArrowLeft className="mr-2 h-4 w-4" /> Back to Directory
-            </Button>
+            </span>
           </Link>
         </div>
         <Footer />
       </main>
     );
   }
-
-  // Use reviews from the provider data if available
-  const reviews: Review[] = provider.reviews || [];
 
   return (
     <main className="flex min-h-screen flex-col bg-[#F6EDE1]">
@@ -142,18 +80,9 @@ export default async function ServicePage({
         <div className="container mx-auto px-8 py-16">
           <div className="flex flex-col md:flex-row gap-8 items-center">
             <div className="md:w-1/2">
-              <div className="flex gap-2 mb-4 flex-wrap">
-                {provider.categories &&
-                  provider.categories.map((category: string, idx: number) => (
-                    <span
-                      key={idx}
-                      className={`px-2 py-1 ${idx % 2 === 0 ? "bg-orange-500" : "bg-[#3A3FC1]"} rounded-md text-xs font-medium`}
-                    >
-                      {category}
-                    </span>
-                  ))}
-              </div>
               <h1 className="text-4xl font-bold mb-4">{provider.name}</h1>
+              
+              {/* Rating display */}
               <div className="flex items-center mb-4">
                 <div className="flex">
                   {Array(5)
@@ -161,30 +90,20 @@ export default async function ServicePage({
                     .map((_, i) => (
                       <Star
                         key={i}
-                        className={`w-5 h-5 ${i < (provider.live_rating || provider.google_rating?.[0] || 0) ? "text-yellow-400 fill-yellow-400" : "text-gray-300"}`}
+                        className={`w-5 h-5 ${i < (provider.live_rating || provider.google_rating?.[0] || 4) ? "text-yellow-400 fill-yellow-400" : "text-gray-300"}`}
                       />
                     ))}
                 </div>
                 <span className="ml-2">
-                  {provider.live_rating || provider.google_rating?.[0] || 0} /5
-                  (
-                  {provider.live_reviews_count ||
-                    provider.google_reviews_count ||
-                    "0"}{" "}
-                  reviews)
+                  {provider.live_rating || provider.google_rating?.[0] || 4} /5
+                  ({provider.live_reviews_count || provider.google_reviews_count || "0"} reviews)
                 </span>
               </div>
-              <div className="flex items-center text-sm mb-4">
+
+              {/* Location */}
+              <div className="flex items-center text-sm mb-6">
                 <MapPin className="w-5 h-5 mr-2" />
-                <span>{provider.location}</span>
-                {provider.distance && (
-                  <span className="ml-2 text-xs bg-blue-500 px-2 py-1 rounded">
-                    {typeof provider.distance === "number"
-                      ? provider.distance.toFixed(1)
-                      : provider.distance}{" "}
-                    km away
-                  </span>
-                )}
+                <span>{provider.location || "UK"}</span>
               </div>
 
               {/* Service badges */}
@@ -194,14 +113,14 @@ export default async function ServicePage({
                     Online
                   </span>
                 )}
-                {provider.is_free && (
+                {provider.is_verified && (
                   <span className="px-3 py-1 bg-green-500 rounded-md text-xs font-medium">
-                    Free
+                    Verified
                   </span>
                 )}
-                {provider.requires_referal && (
+                {!provider.requires_referal && (
                   <span className="px-3 py-1 bg-purple-500 rounded-md text-xs font-medium">
-                    Referral Required
+                    No Referral Required
                   </span>
                 )}
                 {provider.open_now && (
@@ -211,26 +130,30 @@ export default async function ServicePage({
                 )}
               </div>
 
+              {/* Contact buttons */}
               <div className="flex gap-4 mt-6">
-                <Button
-                  className="bg-[#FF5001] hover:bg-[#cc4001] text-white transform hover:scale-105 transition-all duration-200"
-                  onClick={() =>
-                    (window.location.href = `tel:${provider.phone}`)
-                  }
-                >
-                  <Phone className="mr-2 h-4 w-4" /> Contact
-                </Button>
+                {provider.phone && (
+                  <a
+                    href={`tel:${provider.phone}`}
+                    className="inline-flex items-center justify-center px-4 py-2 bg-[#FF5001] hover:bg-[#cc4001] text-white text-sm font-medium rounded-md transform hover:scale-105 transition-all duration-200"
+                  >
+                    <Phone className="mr-2 h-4 w-4" /> Contact
+                  </a>
+                )}
                 {provider.website_url && (
-                  <Button
-                    variant="outline"
-                    className="border-white text-white hover:bg-white/10"
-                    onClick={() => window.open(provider.website_url, "_blank")}
+                  <a
+                    href={provider.website_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center justify-center px-4 py-2 border border-white text-white hover:bg-white/10 text-sm font-medium rounded-md transform hover:scale-105 transition-all duration-200"
                   >
                     <ExternalLink className="mr-2 h-4 w-4" /> Visit Website
-                  </Button>
+                  </a>
                 )}
               </div>
             </div>
+            
+            {/* Provider image */}
             <div className="md:w-1/2 h-80 rounded-lg overflow-hidden">
               <img
                 src={
@@ -248,9 +171,9 @@ export default async function ServicePage({
       {/* Main content */}
       <div className="container mx-auto px-8 py-16">
         <div className="flex flex-col lg:flex-row gap-8">
-          {/* Left column - About and Reviews */}
+          
+          {/* Left column - About */}
           <div className="lg:w-2/3">
-            {/* About section */}
             <section className="mb-12">
               <h2 className="text-2xl font-bold mb-6 text-[#0b6344]">
                 About {provider.name}
@@ -259,113 +182,30 @@ export default async function ServicePage({
                 <p className="text-gray-700 mb-6">
                   {provider.description || "No description available."}
                 </p>
-
-                {/* Services offered */}
-                {provider.services_offered &&
-                  provider.services_offered.length > 0 && (
-                    <div className="mb-6">
-                      <h3 className="text-lg font-semibold mb-3 text-[#0b6344]">
-                        Services Offered
-                      </h3>
-                      <ul className="list-disc pl-5 space-y-1">
-                        {provider.services_offered.map(
-                          (service: string, idx: number) => (
-                            <li key={idx} className="text-gray-700">
-                              {service}
-                            </li>
-                          ),
-                        )}
-                      </ul>
-                    </div>
-                  )}
-
-                {/* Specialties */}
-                {provider.specialties && provider.specialties.length > 0 && (
-                  <div className="mb-6">
-                    <h3 className="text-lg font-semibold mb-3 text-[#0b6344]">
-                      Specialties
-                    </h3>
-                    <div className="flex flex-wrap gap-2">
-                      {provider.specialties.map(
-                        (specialty: string, idx: number) => (
-                          <span
-                            key={idx}
-                            className="px-3 py-1 bg-[#F6EDE1] text-[#0b6344] rounded-md text-sm"
-                          >
-                            {specialty}
-                          </span>
-                        ),
-                      )}
-                    </div>
-                  </div>
-                )}
-
-                {/* Qualifications */}
-                {provider.qualifications &&
-                  provider.qualifications.length > 0 && (
+                
+                {/* Display all available provider data */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                  {provider.created_at && (
                     <div>
-                      <h3 className="text-lg font-semibold mb-3 text-[#0b6344]">
-                        Qualifications
-                      </h3>
-                      <ul className="list-disc pl-5 space-y-1">
-                        {provider.qualifications.map(
-                          (qualification: string, idx: number) => (
-                            <li key={idx} className="text-gray-700">
-                              {qualification}
-                            </li>
-                          ),
-                        )}
-                      </ul>
+                      <h4 className="font-semibold text-[#0b6344] mb-2">Member Since</h4>
+                      <p className="text-gray-700">
+                        {new Date(provider.created_at).toLocaleDateString()}
+                      </p>
                     </div>
                   )}
-              </div>
-            </section>
-
-            {/* Reviews section */}
-            <section>
-              <h2 className="text-2xl font-bold mb-6 text-[#0b6344]">
-                Reviews
-              </h2>
-              <div className="space-y-4">
-                {reviews && reviews.length > 0 ? (
-                  reviews.map((review) => (
-                    <Card key={review.id} className="bg-white">
-                      <CardContent className="pt-6">
-                        <div className="flex justify-between items-start mb-2">
-                          <h3 className="font-semibold">{review.author}</h3>
-                          <span className="text-sm text-gray-500">
-                            {review.date}
-                          </span>
-                        </div>
-                        <div className="flex mb-3">
-                          {Array(5)
-                            .fill(0)
-                            .map((_, i) => (
-                              <Star
-                                key={i}
-                                className={`w-4 h-4 ${i < review.rating ? "text-yellow-400 fill-yellow-400" : "text-gray-300"}`}
-                              />
-                            ))}
-                        </div>
-                        <p className="text-gray-700">{review.comment}</p>
-                      </CardContent>
-                    </Card>
-                  ))
-                ) : (
-                  <div className="text-center py-6">
-                    <p className="text-gray-500">No reviews yet</p>
-                  </div>
-                )}
-              </div>
-              <div className="mt-6">
-                <Button className="bg-[#3A3FC1] hover:bg-[#2e32a6] text-white">
-                  Write a Review
-                </Button>
+                  
+                  {provider.is_verified && (
+                    <div>
+                      <h4 className="font-semibold text-[#0b6344] mb-2">Verification Status</h4>
+                      <p className="text-green-600 font-medium">✓ Verified Provider</p>
+                    </div>
+                  )}
+                </div>
               </div>
             </section>
           </div>
 
-          {/* Right column - Contact info, hours, map */}
+          {/* Right column - Contact info */}
           <div className="lg:w-1/3">
             {/* Contact information */}
             <div className="bg-white rounded-lg p-6 shadow-md mb-8">
@@ -377,72 +217,92 @@ export default async function ServicePage({
                   <MapPin className="w-5 h-5 text-[#3A3FC1] mr-3 mt-0.5" />
                   <div>
                     <p className="text-gray-700">
-                      {provider.address || provider.location}
+                      {provider.location || "Location not provided"}
                     </p>
                   </div>
                 </div>
-                <div className="flex items-center">
-                  <Phone className="w-5 h-5 text-[#3A3FC1] mr-3" />
-                  <a
-                    href={`tel:${provider.phone}`}
-                    className="text-gray-700 hover:text-[#3A3FC1] hover:underline"
-                  >
-                    {provider.phone || "Not provided"}
-                  </a>
-                </div>
-                <div className="flex items-center">
-                  <Mail className="w-5 h-5 text-[#3A3FC1] mr-3" />
-                  <a
-                    href={`mailto:${provider.email}`}
-                    className="text-gray-700 hover:text-[#3A3FC1] hover:underline"
-                  >
-                    {provider.email || "Not provided"}
-                  </a>
-                </div>
-                <div className="flex items-center">
-                  <ExternalLink className="w-5 h-5 text-[#3A3FC1] mr-3" />
-                  <a
-                    href={provider.website_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-[#3A3FC1] hover:underline"
-                  >
-                    {provider.website_url ? "Visit Website" : "Not provided"}
-                  </a>
-                </div>
-              </div>
-            </div>
-
-            {/* Opening hours */}
-            <div className="bg-white rounded-lg p-6 shadow-md mb-8">
-              <h3 className="text-lg font-semibold mb-4 text-[#0b6344]">
-                Opening Hours
-              </h3>
-              <div className="space-y-2">
-                {provider.opening_hours ? (
-                  Object.entries(provider.opening_hours).map(
-                    ([day, hours]: [string, any]) => (
-                      <div key={day} className="flex justify-between">
-                        <span className="font-medium capitalize">{day}</span>
-                        <span className="text-gray-700">
-                          {hours || "Closed"}
-                        </span>
-                      </div>
-                    ),
-                  )
-                ) : (
-                  <p className="text-gray-700">Opening hours not provided</p>
+                
+                {provider.phone && (
+                  <div className="flex items-center">
+                    <Phone className="w-5 h-5 text-[#3A3FC1] mr-3" />
+                    <a
+                      href={`tel:${provider.phone}`}
+                      className="text-gray-700 hover:text-[#3A3FC1] hover:underline"
+                    >
+                      {provider.phone}
+                    </a>
+                  </div>
+                )}
+                
+                {provider.email && (
+                  <div className="flex items-center">
+                    <Mail className="w-5 h-5 text-[#3A3FC1] mr-3" />
+                    <a
+                      href={`mailto:${provider.email}`}
+                      className="text-gray-700 hover:text-[#3A3FC1] hover:underline"
+                    >
+                      {provider.email}
+                    </a>
+                  </div>
+                )}
+                
+                {provider.website_url && (
+                  <div className="flex items-center">
+                    <ExternalLink className="w-5 h-5 text-[#3A3FC1] mr-3" />
+                    <a
+                      href={provider.website_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[#3A3FC1] hover:underline"
+                    >
+                      Visit Website
+                    </a>
+                  </div>
                 )}
               </div>
             </div>
 
-            {/* Google Map */}
+            {/* Additional Info */}
             <div className="bg-white rounded-lg p-6 shadow-md">
               <h3 className="text-lg font-semibold mb-4 text-[#0b6344]">
-                Location
+                Provider Details
               </h3>
-              <div className="h-64 rounded-md mb-4 overflow-hidden">
-                {provider.latitude && provider.longitude ? (
+              <div className="space-y-3">
+                <div>
+                  <span className="font-medium text-gray-700">Provider ID:</span>
+                  <span className="ml-2 text-gray-600">{provider.id}</span>
+                </div>
+                
+                {provider.google_reviews_count && (
+                  <div>
+                    <span className="font-medium text-gray-700">Google Reviews:</span>
+                    <span className="ml-2 text-gray-600">{provider.google_reviews_count}</span>
+                  </div>
+                )}
+                
+                <div>
+                  <span className="font-medium text-gray-700">Status:</span>
+                  <span className={`ml-2 ${provider.is_verified ? 'text-green-600' : 'text-gray-600'}`}>
+                    {provider.is_verified ? 'Verified' : 'Unverified'}
+                  </span>
+                </div>
+                
+                {provider.slug && (
+                  <div>
+                    <span className="font-medium text-gray-700">Slug:</span>
+                    <span className="ml-2 text-gray-600">{provider.slug}</span>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Map Section */}
+            {provider.latitude && provider.longitude && (
+              <div className="bg-white rounded-lg p-6 shadow-md mt-8">
+                <h3 className="text-lg font-semibold mb-4 text-[#0b6344]">
+                  Location Map
+                </h3>
+                <div className="h-64 rounded-md mb-4 overflow-hidden">
                   <iframe
                     width="100%"
                     height="100%"
@@ -451,53 +311,45 @@ export default async function ServicePage({
                     src={`https://www.google.com/maps/embed/v1/place?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&q=${provider.latitude},${provider.longitude}&zoom=15`}
                     allowFullScreen
                   ></iframe>
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center bg-gray-200 text-gray-500">
-                    Map location not available
-                  </div>
-                )}
-              </div>
-              <p className="text-sm text-gray-500">
-                {provider.address || provider.location}
-              </p>
-              {provider.latitude && provider.longitude && (
+                </div>
+                <p className="text-sm text-gray-500 mb-3">
+                  {provider.location}
+                </p>
                 <a
                   href={`https://www.google.com/maps/dir/?api=1&destination=${provider.latitude},${provider.longitude}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-[#3A3FC1] hover:underline text-sm mt-2 inline-block"
+                  className="text-[#3A3FC1] hover:underline text-sm inline-flex items-center"
                 >
-                  <MapPin className="w-4 h-4 inline mr-1" /> Get directions
+                  <MapPin className="w-4 h-4 mr-1" /> Get directions
                 </a>
-              )}
-            </div>
+              </div>
+            )}
+
+            {/* Social Links */}
+            {provider.social_links && Array.isArray(provider.social_links) && provider.social_links.length > 0 && (
+              <div className="bg-white rounded-lg p-6 shadow-md mt-8">
+                <h3 className="text-lg font-semibold mb-4 text-[#0b6344]">
+                  Follow Us
+                </h3>
+                <div className="flex gap-3">
+                  {provider.social_links.map((social: any, idx: number) => (
+                    <a
+                      key={idx}
+                      href={social.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="px-4 py-2 bg-[#3A3FC1] text-white text-sm rounded-md hover:bg-[#2e32a6] transition-colors capitalize"
+                    >
+                      {social.platform}
+                    </a>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
-
-      {/* Similar services section */}
-      <section className="bg-white py-16">
-        <div className="container mx-auto px-8">
-          <h2 className="text-2xl font-bold mb-8 text-[#0b6344]">
-            Similar Services
-          </h2>
-          <React.Suspense
-            fallback={
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="col-span-3 text-center py-8">
-                  <p className="text-gray-500">Loading similar services...</p>
-                </div>
-              </div>
-            }
-          >
-            <SimilarServicesSection
-              providerId={params.id}
-              categories={provider.categories || []}
-              supabase={supabase}
-            />
-          </React.Suspense>
-        </div>
-      </section>
 
       <Footer />
     </main>

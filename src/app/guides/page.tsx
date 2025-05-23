@@ -7,6 +7,8 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
+import Navbar from "@/components/navbar";
+import Footer from "@/components/footer";
 
 const guides = [
   {
@@ -54,6 +56,7 @@ const guides = [
 export default function GuidesPage() {
   return (
     <div className="min-h-screen">
+      <Navbar />
       <div className="bg-[#F6EDE1] py-12">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
@@ -121,6 +124,7 @@ export default function GuidesPage() {
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 }
