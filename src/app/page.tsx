@@ -65,7 +65,9 @@ export default async function Home() {
         <h2 className="text-3xl font-bold text-center pt-8 pb-2 bg-[#045741] text-[#F6EDE1]">
           Support Near You
         </h2>
-        <NearbyServices />
+        <div className="bg-[#F6EDE1]">
+          <NearbyServices />
+        </div>
       </div>
       {/* Community Invitation Section */}
       <section className="bg-[#045842] py-16 text-white">
