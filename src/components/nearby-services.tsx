@@ -207,7 +207,7 @@ export default function NearbyServices() {
           />
         </div>
       )}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 p-16">
         {services.map((service) => (
           <div
             key={service.id}

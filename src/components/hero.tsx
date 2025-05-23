@@ -13,8 +13,8 @@ import {
   Search,
 } from "lucide-react";
 import { createClient } from "../../supabase/client";
-import { useSupabaseDropdowns } from '@/hooks/useSupabaseDropdowns';
-import MultiSelectDropdown from './MultiSelectDropdown';
+import { useSupabaseDropdowns } from "@/hooks/useSupabaseDropdowns";
+import MultiSelectDropdown from "./MultiSelectDropdown";
 
 interface Category {
   id: number;
@@ -83,11 +83,11 @@ export default function Hero() {
   const { supportNeeded, supportTypes, retryFetch } = useSupabaseDropdowns();
 
   useEffect(() => {
-    console.log('Dropdown Data:', {
+    console.log("Dropdown Data:", {
       supportNeeded: supportNeeded.options,
-      supportTypes: supportTypes.options
-    })
-  }, [supportNeeded, supportTypes])
+      supportTypes: supportTypes.options,
+    });
+  }, [supportNeeded, supportTypes]);
 
   const [selections, setSelections] = useState({
     supportNeeded: [] as string[],
@@ -350,29 +350,30 @@ export default function Hero() {
   };
 
   const handleSearch = () => {
-    console.log('Search with:', {
+    console.log("Search with:", {
       selections,
       location: locationInput,
       keyword: searchInput,
       filters: checkboxStates,
-      rating: ratingValue
+      rating: ratingValue,
     });
   };
 
   return (
-    <div className="relative bg-[#F7EFE2] py-16 border-[#0B6445]">
-      <div className="container mx-auto px-4">
+    <div className="relative bg-[#F7EFE2] py-8 md:py-12 lg:py-16 border-[#0B6445]">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col items-center justify-center text-center">
-          <div className="mx-auto mb-8 max-w-5xl w-fit">
-            <h1 className="text-3xl md:text-4xl font-bold text-[#0b6344] mb-4">
+          <div className="mx-auto mb-8 max-w-7xl w-full">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#0b6344] mb-4">
               Find Mental Health & Wellness Services
             </h1>
 
-            <p className="text-lg mb-8 max-w-2xl mx-auto font-semibold text-[#004B2A]">
-              Connect with the right support across the UK for your wellbeing journey
+            <p className="text-base sm:text-lg mb-6 md:mb-8 max-w-2xl mx-auto font-semibold text-[#004B2A]">
+              Connect with the right support across the UK for your wellbeing
+              journey
             </p>
 
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4 mb-6 w-full max-w-6xl mx-auto px-0">
               <div className="relative z-30">
                 <MultiSelectDropdown
                   options={supportNeeded.options}
@@ -381,8 +382,11 @@ export default function Hero() {
                   error={supportNeeded.error}
                   selectedValues={selections.supportNeeded}
                   onSelectionChange={(values) => {
-                    console.log('Selected support needs:', values)
-                    setSelections(prev => ({ ...prev, supportNeeded: values }))
+                    console.log("Selected support needs:", values);
+                    setSelections((prev) => ({
+                      ...prev,
+                      supportNeeded: values,
+                    }));
                   }}
                   onRetry={retryFetch}
                 />
@@ -396,8 +400,11 @@ export default function Hero() {
                   error={supportTypes.error}
                   selectedValues={selections.supportTypes}
                   onSelectionChange={(values) => {
-                    console.log('Support Types Selection:', values)
-                    setSelections(prev => ({ ...prev, supportTypes: values }))
+                    console.log("Support Types Selection:", values);
+                    setSelections((prev) => ({
+                      ...prev,
+                      supportTypes: values,
+                    }));
                   }}
                   onRetry={retryFetch}
                 />
@@ -424,7 +431,10 @@ export default function Hero() {
                     className="w-full px-10 py-2 text-left bg-[#F8EFE2] border-2 border-[#004B2A] rounded-lg"
                     value={locationInput}
                     onChange={handleLocationInputChange}
-                    onFocus={() => locationInput.length >= 3 && setIsLocationDropdownOpen(true)}
+                    onFocus={() =>
+                      locationInput.length >= 3 &&
+                      setIsLocationDropdownOpen(true)
+                    }
                   />
                   <MapPin className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
                 </div>
@@ -460,8 +470,8 @@ export default function Hero() {
               </div>
             </div>
 
-            <div className="bg-[#F7EFE2] rounded-lg p-6 flex flex-col items-center justify-center">
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+            <div className="bg-[#F7EFE2] rounded-lg p-4 md:p-6 flex flex-col items-center justify-center w-full max-w-6xl mx-auto">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 mb-6 w-full px-0">
                 <div
                   className={`flex items-center justify-start bg-blue-200 px-3 py-2 cursor-pointer transition-colors rounded-2xl`}
                   onClick={() => {

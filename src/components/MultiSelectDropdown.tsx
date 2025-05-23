@@ -1,21 +1,21 @@
-'use client';
+"use client";
 
-import { useState, useEffect, useRef } from 'react'
-import { Check, ChevronDown, X } from 'lucide-react'
+import { useState, useEffect, useRef } from "react";
+import { Check, ChevronDown, X } from "lucide-react";
 
 interface Option {
-  id: number
-  name: string
+  id: number;
+  name: string;
 }
 
 interface MultiSelectDropdownProps {
-  options: Option[]
-  placeholder: string
-  loading: boolean
-  error: Error | null
-  selectedValues: string[]
-  onSelectionChange: (values: string[]) => void
-  onRetry?: () => void
+  options: Option[];
+  placeholder: string;
+  loading: boolean;
+  error: Error | null;
+  selectedValues: string[];
+  onSelectionChange: (values: string[]) => void;
+  onRetry?: () => void;
 }
 
 export default function MultiSelectDropdown({
@@ -25,57 +25,60 @@ export default function MultiSelectDropdown({
   error,
   selectedValues,
   onSelectionChange,
-  onRetry
+  onRetry,
 }: MultiSelectDropdownProps) {
-  const [isOpen, setIsOpen] = useState(false)
-  const dropdownRef = useRef<HTMLDivElement>(null)
+  const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Handle click outside to close dropdown
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setIsOpen(false)
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsOpen(false);
       }
     }
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => document.removeEventListener('mousedown', handleClickOutside)
-  }, [])
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   // Handle keyboard navigation
   useEffect(() => {
-    if (!isOpen) return
+    if (!isOpen) return;
 
     function handleKeyDown(e: KeyboardEvent) {
-      if (e.key === 'Escape') {
-        setIsOpen(false)
+      if (e.key === "Escape") {
+        setIsOpen(false);
       }
     }
 
-    document.addEventListener('keydown', handleKeyDown)
-    return () => document.removeEventListener('keydown', handleKeyDown)
-  }, [isOpen])
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [isOpen]);
 
   const toggleOption = (optionName: string) => {
     const newSelection = selectedValues.includes(optionName)
-      ? selectedValues.filter(value => value !== optionName)
-      : [...selectedValues, optionName]
-    onSelectionChange(newSelection)
-  }
+      ? selectedValues.filter((value) => value !== optionName)
+      : [...selectedValues, optionName];
+    onSelectionChange(newSelection);
+  };
 
   const clearAll = () => {
-    onSelectionChange([])
-  }
+    onSelectionChange([]);
+  };
 
   // Get display text based on selection
   const getDisplayText = () => {
     if (selectedValues.length === 0) {
-      return placeholder
+      return placeholder;
     }
     if (selectedValues.length === 1) {
-      return selectedValues[0]
+      return selectedValues[0];
     }
-    return `${selectedValues.length} selected`
-  }
+    return `${selectedValues.length} selected`;
+  };
 
   return (
     <div className="relative w-full" ref={dropdownRef}>
@@ -86,19 +89,19 @@ export default function MultiSelectDropdown({
         aria-expanded={isOpen}
         aria-haspopup="listbox"
       >
-        <span className="truncate text-[#004B2A]">
+        <span className="whitespace-normal line-clamp-2 text-[#004B2A]">
           {getDisplayText()}
         </span>
-        <ChevronDown 
-          className={`transition-transform duration-200 ${isOpen ? 'rotate-180' : ''} text-[#004B2A]`} 
+        <ChevronDown
+          className={`transition-transform duration-200 ${isOpen ? "rotate-180" : ""} text-[#004B2A]`}
         />
       </button>
 
       {/* Dropdown Panel */}
       {isOpen && (
-        <div 
+        <div
           className="absolute z-50 w-full mt-1 bg-[#F8EFE2] border-2 border-[#004B2A] rounded-lg shadow-lg top-full left-0"
-          style={{ minWidth: '200px' }}
+          style={{ minWidth: "100%" }}
         >
           {/* Loading State */}
           {loading && (
@@ -139,18 +142,26 @@ export default function MultiSelectDropdown({
                   role="option"
                   aria-selected={selectedValues.includes(option.name)}
                   className={`px-4 py-2 cursor-pointer flex items-center space-x-3 hover:bg-[rgba(0,75,42,0.1)] ${
-                    selectedValues.includes(option.name) ? 'bg-[rgba(0,75,42,0.15)]' : ''
+                    selectedValues.includes(option.name)
+                      ? "bg-[rgba(0,75,42,0.15)]"
+                      : ""
                   }`}
                   onClick={() => toggleOption(option.name)}
                 >
-                  <div className={`w-5 h-5 border-2 border-[#004B2A] rounded flex items-center justify-center ${
-                    selectedValues.includes(option.name) ? 'bg-[#004B2A]' : 'bg-white'
-                  }`}>
+                  <div
+                    className={`w-5 h-5 border-2 border-[#004B2A] rounded flex items-center justify-center ${
+                      selectedValues.includes(option.name)
+                        ? "bg-[#004B2A]"
+                        : "bg-white"
+                    }`}
+                  >
                     {selectedValues.includes(option.name) && (
                       <Check className="h-4 w-4 text-white" />
                     )}
                   </div>
-                  <span className="flex-1 text-left text-[#004B2A]">{option.name}</span>
+                  <span className="flex-1 text-left text-[#004B2A]">
+                    {option.name}
+                  </span>
                 </li>
               ))}
             </ul>
@@ -171,5 +182,5 @@ export default function MultiSelectDropdown({
         </div>
       )}
     </div>
-  )
-} 
+  );
+}
