@@ -61,22 +61,22 @@ export default async function Home() {
     <main className="flex min-h-screen flex-col border-[#b60404] border-0">
       <Navbar />
       <Hero />
-      <div>
+      <div className="bg-[#F6EDE1]">
         <h2 className="text-3xl font-bold text-center pt-8 pb-2 bg-[#045741] text-[#F6EDE1]">
           Support Near You
         </h2>
-        <NearbyServices className="bg-[#70cc16]" />
+        <NearbyServices />
       </div>
       {/* Community Invitation Section */}
-      <section className="bg-[#F7EFE2] py-16">
+      <section className="bg-[#045842] py-16 text-white">
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row items-center justify-between gap-8">
             <div className="md:w-1/2">
               <Users className="h-16 w-16 text-[#3A3FC1] mb-4" />
-              <h2 className="text-3xl font-bold mb-4 text-[#0b6344]">
+              <h2 className="text-3xl font-bold mb-4 text-white">
                 Talk to Others Who Get It
               </h2>
-              <p className="text-lg mb-6 text-gray-700">
+              <p className="text-lg mb-6 text-white">
                 Our peer-support forum is a safe space to share your story, ask
                 questions, and connect with others.
               </p>
@@ -85,9 +85,9 @@ export default async function Home() {
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </div>
-            <div className="md:w-1/2 rounded-lg p-6 bg-[#F6EDE1]">
+            <div className="md:w-1/2 rounded-lg p-6 bg-white">
               <div className="space-y-4">
-                <div className="p-4 rounded-lg bg-[#F6EDE1] border-[#045842] border-4">
+                <div className="p-4 rounded-lg bg-white border-[#F6EDE1] border-4">
                   <p className="font-medium text-[#0b6344]">
                     "Finding this community has been life-changing. I finally
                     feel understood."
@@ -96,7 +96,7 @@ export default async function Home() {
                     — Sarah, Community Member
                   </p>
                 </div>
-                <div className="p-4 rounded-lg bg-[#F6EDE1] border-[#045842] border-4">
+                <div className="p-4 rounded-lg bg-white border-[#F6EDE1] border-4">
                   <p className="font-medium text-[#0b6344]">
                     "The support I've received here helped me through my darkest
                     days."
@@ -111,7 +111,7 @@ export default async function Home() {
         </div>
       </section>
       {/* Popular Guides Section */}
-      <section className="py-16 bg-[#F6EDE1] border-[#f60000] border-0">
+      <section className="py-16 bg-[#F6EDE1] border-0">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <BookOpen className="h-12 w-12 mx-auto text-[#FF5001] mb-4" />
@@ -213,7 +213,7 @@ export default async function Home() {
         </div>
       </section>
       {/* Newsletter CTA */}
-      <section className="bg-[#F7EFE2] py-16">
+      <section className="bg-[#F6EDE1] py-16">
         <div className="container mx-auto px-4 max-w-3xl">
           <div className="text-center mb-8">
             <Send className="h-12 w-12 mx-auto text-[#3A3FC1] mb-4" />
