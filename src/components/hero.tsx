@@ -350,13 +350,42 @@ export default function Hero() {
   };
 
   const handleSearch = () => {
-    console.log("Search with:", {
-      selections,
-      location: locationInput,
-      keyword: searchInput,
-      filters: checkboxStates,
-      rating: ratingValue,
-    });
+    // Build query parameters for the directory page
+    const params = new URLSearchParams();
+
+    // Add search keyword if present
+    if (searchInput) {
+      params.append("keyword", searchInput);
+    }
+
+    // Add location if present
+    if (locationInput) {
+      params.append("location", locationInput);
+    }
+
+    // Add rating if set
+    if (ratingValue > 0) {
+      params.append("rating", ratingValue.toString());
+    }
+
+    // Add filter options
+    if (checkboxStates.online) params.append("online", "true");
+    if (checkboxStates.free) params.append("free", "true");
+    if (checkboxStates.referral) params.append("referral", "true");
+    if (checkboxStates.open) params.append("open", "true");
+
+    // Add support needed selections
+    if (selections.supportNeeded.length > 0) {
+      params.append("supportNeeded", selections.supportNeeded.join(","));
+    }
+
+    // Add support types selections
+    if (selections.supportTypes.length > 0) {
+      params.append("supportTypes", selections.supportTypes.join(","));
+    }
+
+    // Navigate to directory page with query parameters
+    window.location.href = `/directory?${params.toString()}`;
   };
 
   return (

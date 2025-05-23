@@ -62,23 +62,20 @@ export default async function Home() {
       <Navbar />
       <Hero />
       <div className="bg-[#F6EDE1]">
-        <h2 className="text-3xl font-bold text-center pt-8 pb-2 bg-[#045741] text-[#F6EDE1]">
-          Support Near You
-        </h2>
         <div className="bg-[#F6EDE1]">
           <NearbyServices />
         </div>
       </div>
       {/* Community Invitation Section */}
-      <section className="bg-[#045842] py-16 text-white">
-        <div className="container mx-auto px-4">
+      <section className="py-16 text-white bg-[#F6EDE1]">
+        <div className="container mx-auto px-8">
           <div className="flex flex-col md:flex-row items-center justify-between gap-8">
             <div className="md:w-1/2">
               <Users className="h-16 w-16 text-[#3A3FC1] mb-4" />
-              <h2 className="text-3xl font-bold mb-4 text-white">
+              <h2 className="text-3xl font-bold mb-4 text-[#045842]">
                 Talk to Others Who Get It
               </h2>
-              <p className="text-lg mb-6 text-white">
+              <p className="text-lg mb-6 text-[#045842]">
                 Our peer-support forum is a safe space to share your story, ask
                 questions, and connect with others.
               </p>
@@ -87,9 +84,13 @@ export default async function Home() {
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </div>
-            <div className="md:w-1/2 rounded-lg p-6 bg-white">
+            <div className="md:w-1/2 rounded-lg p-6 bg-[#F6EDE1]">
               <div className="space-y-4">
-                <div className="p-4 rounded-lg bg-white border-[#F6EDE1] border-4">
+                <div
+                  className="p-4 rounded-lg border-4 bg-[#faf0e3] border-[#045842] relative"
+                  style={{ borderRadius: "18px" }}
+                >
+                  <div className="absolute w-4 h-4 bg-[#faf0e3] border-l-4 border-b-4 border-[#045842] transform rotate-45 -left-2 top-6"></div>
                   <p className="font-medium text-[#0b6344]">
                     "Finding this community has been life-changing. I finally
                     feel understood."
@@ -98,13 +99,31 @@ export default async function Home() {
                     — Sarah, Community Member
                   </p>
                 </div>
-                <div className="p-4 rounded-lg bg-white border-[#F6EDE1] border-4">
+                <div
+                  className="p-4 rounded-lg border-4 bg-[#F6EDE1] border-[#045842] relative"
+                  style={{ borderRadius: "18px" }}
+                >
+                  <div className="absolute w-4 h-4 bg-[#F6EDE1] border-r-4 border-t-4 border-[#045842] transform rotate-45 -right-2 top-6"></div>
                   <p className="font-medium text-[#0b6344]">
                     "The support I've received here helped me through my darkest
                     days."
                   </p>
                   <p className="text-sm text-gray-500 mt-2">
                     — James, Community Member
+                  </p>
+                </div>
+                <div
+                  className="p-4 rounded-lg border-4 bg-[#faf0e3] border-[#045842] relative"
+                  style={{ borderRadius: "18px" }}
+                >
+                  <div className="absolute w-4 h-4 bg-[#faf0e3] border-l-4 border-b-4 border-[#045842] transform rotate-45 -left-2 top-6"></div>
+                  <p className="font-medium text-[#0b6344]">
+                    "Getting helpful insights from others who've been through
+                    similar experiences has been invaluable for my recovery
+                    journey."
+                  </p>
+                  <p className="text-sm text-gray-500 mt-2">
+                    — Emma, Community Member
                   </p>
                 </div>
               </div>
@@ -114,19 +133,19 @@ export default async function Home() {
       </section>
       {/* Popular Guides Section */}
       <section className="py-16 bg-[#F6EDE1] border-0">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <BookOpen className="h-12 w-12 mx-auto text-[#FF5001] mb-4" />
+        <div className="container mx-auto px-8">
+          <div className="text-center mb-16">
+            <BookOpen className="h-12 w-12 mx-auto mb-4 text-[#3C41C8]" />
             <h2 className="text-3xl font-bold mb-4 text-[#0b6344]">
               Understand What You're Going Through
             </h2>
-            <p className="text-lg max-w-2xl mx-auto text-gray-700">
+            <p className="text-lg mx-auto text-gray-700 w-3/5 max-w-3xl">
               Explore our expert-written guides to help you navigate your mental
               health journey.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
             {popularGuides.map((guide, index) => (
               <Card
                 key={index}
@@ -170,8 +189,8 @@ export default async function Home() {
         </div>
       </section>
       {/* Trust & Transparency Strip */}
-      <section className="bg-[#045741] py-12 text-white">
-        <div className="container mx-auto px-4">
+      <section className="bg-[#045741] py-16 text-white">
+        <div className="container mx-auto px-8">
           <div className="text-center mb-8">
             <Shield className="h-12 w-12 mx-auto mb-4" />
             <p className="text-xl font-medium mb-6">
@@ -180,7 +199,7 @@ export default async function Home() {
             </p>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
             <div className="flex flex-col items-center text-center">
               <div className="rounded-full p-4 mb-4 bg-[#F6EDE1]">
                 <Image
@@ -216,7 +235,7 @@ export default async function Home() {
       </section>
       {/* Newsletter CTA */}
       <section className="bg-[#F6EDE1] py-16">
-        <div className="container mx-auto px-4 max-w-3xl">
+        <div className="container mx-auto px-8 max-w-3xl">
           <div className="text-center mb-8">
             <Send className="h-12 w-12 mx-auto text-[#3A3FC1] mb-4" />
             <h2 className="text-3xl font-bold mb-4 text-[#0b6344]">
@@ -225,11 +244,11 @@ export default async function Home() {
           </div>
 
           <div className="rounded-lg p-8 bg-[#F6EDE1] border-[#3C41C8] border-4">
-            <form className="flex flex-col md:flex-row gap-4">
+            <form className="flex flex-col md:flex-row gap-8">
               <input
                 type="email"
                 placeholder="Your email address"
-                className="flex-grow px-4 py-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#3A3FC1]"
+                className="flex-grow px-4 py-3 rounded-md focus:outline-none focus:ring-2 focus:ring-[#3A3FC1] border-[#3C41C8] border-2 bg-[#F6EDE1]"
                 required
               />
               <Button className="bg-[#FF5001] hover:bg-[#cc4001] text-white transform hover:scale-105 transition-all duration-200 whitespace-nowrap">
