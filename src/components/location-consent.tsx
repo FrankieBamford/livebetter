@@ -56,7 +56,7 @@ export default function LocationConsent({
   if (!showConsent) return null;
 
   return (
-    <div className="fixed bottom-4 left-0 right-0 mx-auto w-full max-w-md bg-white rounded-lg shadow-lg border border-gray-200 p-4 z-50">
+    <div className="fixed bottom-4 left-0 right-0 mx-auto w-full max-w-md rounded-lg shadow-lg border border-gray-200 p-4 z-50 bg-[#F6EFE1] border-4 border-8 border-[#02543c] border-2">
       <div className="flex items-start gap-3">
         <div className="bg-blue-100 p-2 rounded-full">
           <MapPin className="h-5 w-5 text-blue-600" />

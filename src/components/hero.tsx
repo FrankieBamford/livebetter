@@ -4,7 +4,6 @@ import Link from "next/link";
 import Image from "next/image";
 import {
   Globe,
-  DollarSign,
   FileText,
   Clock,
   Check,
@@ -13,10 +12,13 @@ import {
   Search,
   Filter,
 } from "lucide-react";
+import Sterling from "./ui/sterling-icon";
 import { createClient } from "../../supabase/client";
 import { useSupabaseDropdowns } from "@/hooks/useSupabaseDropdowns";
 import MultiSelectDropdown from "./MultiSelectDropdown";
-import AdvancedFiltersDropdown, { AdvancedFilters } from "./AdvancedFiltersDropdown";
+import AdvancedFiltersDropdown, {
+  AdvancedFilters,
+} from "./AdvancedFiltersDropdown";
 
 interface Category {
   id: number;
@@ -56,7 +58,8 @@ export default function Hero() {
   // Search state
   const [searchInput, setSearchInput] = useState("");
   const [predictiveText, setPredictiveText] = useState("");
-  const [isLoadingSearchSuggestions, setIsLoadingSearchSuggestions] = useState(false);
+  const [isLoadingSearchSuggestions, setIsLoadingSearchSuggestions] =
+    useState(false);
   const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Location search state
@@ -137,7 +140,7 @@ export default function Hero() {
 
     // fetchCategories();
     // fetchServiceTypes();
-    
+
     console.log("Database fetches temporarily disabled for testing");
   }, [supabase]);
 
@@ -181,11 +184,7 @@ export default function Hero() {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [
-    isDropdownOpen,
-    isLocationDropdownOpen,
-    isServiceTypeDropdownOpen,
-  ]); // Re-run effect if any dropdown state changes
+  }, [isDropdownOpen, isLocationDropdownOpen, isServiceTypeDropdownOpen]); // Re-run effect if any dropdown state changes
 
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
@@ -253,23 +252,25 @@ export default function Hero() {
 
           // Build word dictionary from all provider names and descriptions
           const allWords = new Set<string>();
-          
-          data?.forEach(provider => {
+
+          data?.forEach((provider) => {
             // Add words from provider name
-            const nameWords = provider.name.toLowerCase()
-              .replace(/[^\w\s]/g, ' ') // Replace punctuation with spaces
+            const nameWords = provider.name
+              .toLowerCase()
+              .replace(/[^\w\s]/g, " ") // Replace punctuation with spaces
               .split(/\s+/)
               .filter((word: string) => word.length >= 3); // Only words 3+ characters
-            
+
             nameWords.forEach((word: string) => allWords.add(word));
-            
+
             // Add words from provider description
             if (provider.description) {
-              const descWords = provider.description.toLowerCase()
-                .replace(/[^\w\s]/g, ' ')
+              const descWords = provider.description
+                .toLowerCase()
+                .replace(/[^\w\s]/g, " ")
                 .split(/\s+/)
                 .filter((word: string) => word.length >= 3);
-              
+
               descWords.forEach((word: string) => allWords.add(word));
             }
           });
@@ -277,7 +278,9 @@ export default function Hero() {
           // Find the best word completion for the current input
           const currentWord = value.toLowerCase().trim();
           const matchingWords = Array.from(allWords)
-            .filter(word => word.startsWith(currentWord) && word !== currentWord)
+            .filter(
+              (word) => word.startsWith(currentWord) && word !== currentWord,
+            )
             .sort((a, b) => a.length - b.length); // Prefer shorter completions
 
           if (matchingWords.length > 0) {
@@ -453,11 +456,11 @@ export default function Hero() {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col items-center justify-center text-center">
           <div className="mx-auto mb-8 max-w-7xl w-full">
-            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#0b6344] mb-4">
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 text-[#00573F]">
               Find Mental Health & Wellness Services
             </h1>
 
-            <p className="text-base sm:text-lg mb-6 md:mb-8 max-w-2xl mx-auto font-semibold text-[#004B2A]">
+            <p className="sm:text-lg mb-6 md:mb-8 max-w-2xl mx-auto font-semibold text-[#00573F]">
               Connect with the right support across the UK for your wellbeing
               journey
             </p>
@@ -510,32 +513,40 @@ export default function Hero() {
                     onKeyDown={handleSearchKeyDown}
                   />
                   {/* Predictive text overlay */}
-                  {predictiveText && predictiveText !== searchInput && searchInput.length > 0 && (
-                    <div 
-                      className="absolute pointer-events-none flex items-center"
-                      style={{
-                        left: '42px',   // Adjust this to move the text left/right
-                        top: '2px',     // Adjust this to move the text up/down
-                        paddingTop: '8px',
-                        paddingBottom: '8px'
-                      }}
-                    >
-                      <span className="text-transparent select-none">{searchInput}</span>
-                      <span className="text-gray-400">{predictiveText.substring(searchInput.length)}</span>
-                    </div>
-                  )}
+                  {predictiveText &&
+                    predictiveText !== searchInput &&
+                    searchInput.length > 0 && (
+                      <div
+                        className="absolute pointer-events-none flex items-center"
+                        style={{
+                          left: "42px", // Adjust this to move the text left/right
+                          top: "2px", // Adjust this to move the text up/down
+                          paddingTop: "8px",
+                          paddingBottom: "8px",
+                        }}
+                      >
+                        <span className="text-transparent select-none">
+                          {searchInput}
+                        </span>
+                        <span className="text-gray-400">
+                          {predictiveText.substring(searchInput.length)}
+                        </span>
+                      </div>
+                    )}
                   <Search className="absolute left-3 top-3.5 h-4 w-4 text-gray-400" />
-                  {predictiveText && predictiveText !== searchInput && searchInput.length > 0 && (
-                    <div 
-                      className="absolute pointer-events-none text-xs text-gray-400"
-                      style={{
-                        right: '10px',  // Adjust this value to move left/right
-                        top: '14px'     // Adjust this value to move up/down
-                      }}
-                    >
-                      Tab to complete
-                    </div>
-                  )}
+                  {predictiveText &&
+                    predictiveText !== searchInput &&
+                    searchInput.length > 0 && (
+                      <div
+                        className="absolute pointer-events-none text-xs text-gray-400"
+                        style={{
+                          right: "10px", // Adjust this value to move left/right
+                          top: "14px", // Adjust this value to move up/down
+                        }}
+                      >
+                        Tab to complete
+                      </div>
+                    )}
                 </div>
               </div>
 
@@ -590,12 +601,15 @@ export default function Hero() {
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 mb-6 w-full px-0">
                 <div
                   className={`flex items-center justify-start px-3 py-2 cursor-pointer transition-all duration-200 rounded-2xl ${
-                    checkboxStates.online 
-                      ? 'bg-blue-300 hover:bg-blue-300' 
-                      : 'bg-blue-200 hover:bg-blue-300'
+                    checkboxStates.online
+                      ? "bg-blue-300 hover:bg-blue-300"
+                      : "bg-blue-200 hover:bg-blue-300"
                   }`}
                   onClick={() => {
-                    console.log("Online Services clicked, current state:", checkboxStates.online);
+                    console.log(
+                      "Online Services clicked, current state:",
+                      checkboxStates.online,
+                    );
                     setCheckboxStates((prev) => {
                       const newState = {
                         ...prev,
@@ -621,12 +635,15 @@ export default function Hero() {
 
                 <div
                   className={`flex items-center justify-start px-3 py-2 cursor-pointer transition-all duration-200 rounded-2xl ${
-                    checkboxStates.free 
-                      ? 'bg-green-300 hover:bg-green-300' 
-                      : 'bg-green-200 hover:bg-green-300'
+                    checkboxStates.free
+                      ? "bg-green-300 hover:bg-green-300"
+                      : "bg-green-200 hover:bg-green-300"
                   }`}
                   onClick={() => {
-                    console.log("Free Services clicked, current state:", checkboxStates.free);
+                    console.log(
+                      "Free Services clicked, current state:",
+                      checkboxStates.free,
+                    );
                     setCheckboxStates((prev) => {
                       const newState = {
                         ...prev,
@@ -645,19 +662,22 @@ export default function Hero() {
                     onChange={() => {}}
                   />
                   <div className="flex items-center text-sm">
-                    <DollarSign className="w-4 h-4 mr-2 text-green-500" />
+                    <Sterling className="w-4 h-4 mr-2 text-green-500" />
                     Free Services
                   </div>
                 </div>
 
                 <div
                   className={`flex items-center justify-start px-3 py-2 cursor-pointer transition-all duration-200 rounded-2xl ${
-                    checkboxStates.referral 
-                      ? 'bg-purple-300 hover:bg-purple-300' 
-                      : 'bg-purple-200 hover:bg-purple-300'
+                    checkboxStates.referral
+                      ? "bg-purple-300 hover:bg-purple-300"
+                      : "bg-purple-200 hover:bg-purple-300"
                   }`}
                   onClick={() => {
-                    console.log("Requires Referral clicked, current state:", checkboxStates.referral);
+                    console.log(
+                      "Requires Referral clicked, current state:",
+                      checkboxStates.referral,
+                    );
                     setCheckboxStates((prev) => {
                       const newState = {
                         ...prev,
@@ -683,12 +703,15 @@ export default function Hero() {
 
                 <div
                   className={`flex items-center justify-start px-3 py-2 cursor-pointer transition-all duration-200 rounded-2xl ${
-                    checkboxStates.open 
-                      ? 'bg-yellow-300 hover:bg-yellow-300' 
-                      : 'bg-yellow-200 hover:bg-yellow-300'
+                    checkboxStates.open
+                      ? "bg-yellow-300 hover:bg-yellow-300"
+                      : "bg-yellow-200 hover:bg-yellow-300"
                   }`}
                   onClick={() => {
-                    console.log("Open Now clicked, current state:", checkboxStates.open);
+                    console.log(
+                      "Open Now clicked, current state:",
+                      checkboxStates.open,
+                    );
                     setCheckboxStates((prev) => {
                       const newState = {
                         ...prev,
@@ -715,7 +738,7 @@ export default function Hero() {
 
               <div className="mt-6 flex flex-col items-center w-full">
                 <button
-                  className="flex items-center gap-2 px-4 py-2 bg-white border border-[#3A3FC1] text-[#3A3FC1] rounded-lg shadow-sm hover:bg-[#f0f3ff] transition-all duration-150"
+                  className="flex items-center gap-2 px-4 py-2 border border-[#3A3FC1] text-[#3A3FC1] rounded-lg shadow-sm hover:bg-[#f0f3ff] transition-all duration-150 bg-[#F6EFE1] border-solid border-4 border-2"
                   onClick={() => setIsAdvancedOpen(true)}
                   type="button"
                 >

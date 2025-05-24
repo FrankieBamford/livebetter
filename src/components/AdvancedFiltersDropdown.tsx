@@ -1,20 +1,9 @@
 import React, { useState } from "react";
 import { Filter, X } from "lucide-react";
 
-const AGE_OPTIONS = [
-  "Young People",
-  "Adults",
-  "Over 60s",
-];
-const LANGUAGE_OPTIONS = [
-  "Multilingual Available",
-  "Culturally Sensitive",
-];
-const PROVIDER_TYPES = [
-  "NHS",
-  "Private",
-  "Charity",
-];
+const AGE_OPTIONS = ["Young People", "Adults", "Over 60s"];
+const LANGUAGE_OPTIONS = ["Multilingual Available", "Culturally Sensitive"];
+const PROVIDER_TYPES = ["NHS", "Private", "Charity"];
 const ACCESSIBILITY_OPTIONS = [
   "Wheelchair Accessible",
   "Neurodivergent-friendly",
@@ -81,7 +70,9 @@ const AdvancedFiltersDropdown: React.FC<Props> = ({
               <input
                 type="checkbox"
                 checked={filters.inPerson}
-                onChange={() => setFilters({ ...filters, inPerson: !filters.inPerson })}
+                onChange={() =>
+                  setFilters({ ...filters, inPerson: !filters.inPerson })
+                }
                 className="accent-[#3A3FC1]"
               />
               <span>In-Person Services</span>
@@ -176,14 +167,18 @@ const AdvancedFiltersDropdown: React.FC<Props> = ({
           <div>
             <div className="font-medium mb-1 flex justify-between items-center">
               <span>Distance</span>
-              <span className="text-xs text-gray-500">{filters.distance} miles</span>
+              <span className="text-xs text-gray-500">
+                {filters.distance} miles
+              </span>
             </div>
             <input
               type="range"
               min={0}
               max={100}
               value={filters.distance}
-              onChange={e => setFilters({ ...filters, distance: Number(e.target.value) })}
+              onChange={(e) =>
+                setFilters({ ...filters, distance: Number(e.target.value) })
+              }
               className="w-full accent-[#3A3FC1]"
             />
             <div className="flex justify-between text-xs text-gray-400 mt-1">
@@ -191,16 +186,27 @@ const AdvancedFiltersDropdown: React.FC<Props> = ({
               <span>100+</span>
             </div>
           </div>
-
         </div>
         <div className="flex justify-between mt-6 gap-2">
-          <button
-            className="px-4 py-2 rounded-md bg-gray-200 text-gray-700 hover:bg-gray-300 transition-colors"
-            onClick={onReset}
-            type="button"
-          >
-            Reset
-          </button>
+          <div className="flex gap-2">
+            <button
+              className="px-4 py-2 rounded-md bg-gray-200 text-gray-700 hover:bg-gray-300 transition-colors"
+              onClick={onReset}
+              type="button"
+            >
+              Reset
+            </button>
+            <button
+              className="px-4 py-2 rounded-md bg-[#3A3FC1] text-white hover:bg-[#2e32a6] transition-colors"
+              onClick={() => {
+                onApply();
+                onClose();
+              }}
+              type="button"
+            >
+              Done
+            </button>
+          </div>
           <button
             className="px-4 py-2 rounded-md bg-[#3A3FC1] text-white hover:bg-[#2e32a6] transition-colors"
             onClick={onApply}
@@ -214,4 +220,4 @@ const AdvancedFiltersDropdown: React.FC<Props> = ({
   );
 };
 
-export default AdvancedFiltersDropdown; 
+export default AdvancedFiltersDropdown;

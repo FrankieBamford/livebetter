@@ -167,16 +167,26 @@ export default function MultiSelectDropdown({
             </ul>
           )}
 
-          {/* Clear All Button */}
-          {selectedValues.length > 0 && (
+          {/* Clear All and Done Buttons */}
+          {(selectedValues.length > 0 || true) && (
             <div className="p-2 border-t border-gray-200">
-              <button
-                onClick={clearAll}
-                className="w-full px-4 py-2 text-sm text-[#004B2A] hover:bg-[rgba(0,75,42,0.1)] rounded-md flex items-center justify-center"
-              >
-                <X className="h-4 w-4 mr-1" />
-                Clear all
-              </button>
+              <div className="flex gap-2">
+                {selectedValues.length > 0 && (
+                  <button
+                    onClick={clearAll}
+                    className="flex-1 px-4 py-2 text-sm text-[#004B2A] hover:bg-[rgba(0,75,42,0.1)] rounded-md flex items-center justify-center"
+                  >
+                    <X className="h-4 w-4 mr-1" />
+                    Clear all
+                  </button>
+                )}
+                <button
+                  onClick={() => setIsOpen(false)}
+                  className="flex-1 px-4 py-2 text-sm bg-[#004B2A] text-white hover:bg-[#003B20] rounded-md flex items-center justify-center"
+                >
+                  Done
+                </button>
+              </div>
             </div>
           )}
         </div>

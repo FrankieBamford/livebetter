@@ -9,43 +9,51 @@ export default function Footer() {
   return (
     <footer className="bg-[#F6EDE1] border-t border-[#F6EDE1]">
       <div className="container mx-auto px-8 py-8 md:py-16 border-[#F6EDE1]">
-        <div className="grid grid-cols-2 gap-y-8 gap-x-8 md:grid-cols-4 md:gap-8 mb-8 md:mb-16">
-          {/* Product Column */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8 md:mb-16 md:place-items-center">
+          {/* Main Site Menu Column */}
           <div>
-            <h3 className="font-semibold text-gray-900 mb-3 md:mb-4 text-sm md:text-base">
-              Product
+            <h3 className="font-semibold text-[#0b6344] mb-3 md:mb-4 text-sm md:text-base">
+              Navigation
             </h3>
             <ul className="space-y-2">
               <li>
                 <Link
-                  href="#features"
-                  className="text-gray-600 hover:text-blue-600 text-xs md:text-sm"
+                  href="/guides"
+                  className="text-gray-600 hover:text-[#3A3FC1] text-xs md:text-sm"
                 >
-                  Features
+                  Guides
                 </Link>
               </li>
               <li>
                 <Link
-                  href="#pricing"
-                  className="text-gray-600 hover:text-blue-600 text-xs md:text-sm"
+                  href="/community"
+                  className="text-gray-600 hover:text-[#3A3FC1] text-xs md:text-sm"
                 >
-                  Pricing
+                  Community
                 </Link>
               </li>
               <li>
                 <Link
-                  href="/dashboard"
-                  className="text-gray-600 hover:text-blue-600 text-xs md:text-sm"
+                  href="/about"
+                  className="text-gray-600 hover:text-[#3A3FC1] text-xs md:text-sm"
                 >
-                  Dashboard
+                  About
                 </Link>
               </li>
               <li>
                 <Link
-                  href="#"
-                  className="text-gray-600 hover:text-blue-600 text-xs md:text-sm"
+                  href="/crisis"
+                  className="text-gray-600 hover:text-[#3A3FC1] text-xs md:text-sm"
                 >
-                  API
+                  Help in a Crisis
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/directory"
+                  className="text-gray-600 hover:text-[#3A3FC1] text-xs md:text-sm"
+                >
+                  Directory
                 </Link>
               </li>
             </ul>
@@ -53,81 +61,40 @@ export default function Footer() {
 
           {/* Company Column */}
           <div>
-            <h3 className="font-semibold text-gray-900 mb-3 md:mb-4 text-sm md:text-base">
+            <h3 className="font-semibold text-[#0b6344] mb-3 md:mb-4 text-sm md:text-base">
               Company
             </h3>
             <ul className="space-y-2">
               <li>
                 <Link
-                  href="#"
-                  className="text-gray-600 hover:text-blue-600 text-xs md:text-sm"
+                  href="/company"
+                  className="text-gray-600 hover:text-[#3A3FC1] text-xs md:text-sm"
                 >
-                  About
+                  About Us
                 </Link>
               </li>
               <li>
                 <Link
-                  href="#"
-                  className="text-gray-600 hover:text-blue-600 text-xs md:text-sm"
+                  href="/company#team"
+                  className="text-gray-600 hover:text-[#3A3FC1] text-xs md:text-sm"
                 >
-                  Blog
+                  Our Team
                 </Link>
               </li>
               <li>
                 <Link
-                  href="#"
-                  className="text-gray-600 hover:text-blue-600 text-xs md:text-sm"
+                  href="/company#careers"
+                  className="text-gray-600 hover:text-[#3A3FC1] text-xs md:text-sm"
                 >
                   Careers
                 </Link>
               </li>
               <li>
                 <Link
-                  href="#"
-                  className="text-gray-600 hover:text-blue-600 text-xs md:text-sm"
+                  href="/company#contact"
+                  className="text-gray-600 hover:text-[#3A3FC1] text-xs md:text-sm"
                 >
-                  Press
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* Resources Column */}
-          <div>
-            <h3 className="font-semibold text-gray-900 mb-3 md:mb-4 text-sm md:text-base">
-              Resources
-            </h3>
-            <ul className="space-y-2">
-              <li>
-                <Link
-                  href="#"
-                  className="text-gray-600 hover:text-blue-600 text-xs md:text-sm"
-                >
-                  Documentation
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="#"
-                  className="text-gray-600 hover:text-blue-600 text-xs md:text-sm"
-                >
-                  Help Center
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="#"
-                  className="text-gray-600 hover:text-blue-600 text-xs md:text-sm"
-                >
-                  Community
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="#"
-                  className="text-gray-600 hover:text-blue-600 text-xs md:text-sm"
-                >
-                  Status
+                  Contact Us
                 </Link>
               </li>
             </ul>
@@ -135,40 +102,40 @@ export default function Footer() {
 
           {/* Legal Column */}
           <div>
-            <h3 className="font-semibold text-gray-900 mb-3 md:mb-4 text-sm md:text-base">
+            <h3 className="font-semibold text-[#0b6344] mb-3 md:mb-4 text-sm md:text-base">
               Legal
             </h3>
             <ul className="space-y-2">
               <li>
                 <Link
-                  href="#"
-                  className="text-gray-600 hover:text-blue-600 text-xs md:text-sm"
+                  href="/legal#privacy"
+                  className="text-gray-600 hover:text-[#3A3FC1] text-xs md:text-sm"
                 >
-                  Privacy
+                  Privacy Policy
                 </Link>
               </li>
               <li>
                 <Link
-                  href="#"
-                  className="text-gray-600 hover:text-blue-600 text-xs md:text-sm"
+                  href="/legal#terms"
+                  className="text-gray-600 hover:text-[#3A3FC1] text-xs md:text-sm"
                 >
-                  Terms
+                  Terms of Service
                 </Link>
               </li>
               <li>
                 <Link
-                  href="#"
-                  className="text-gray-600 hover:text-blue-600 text-xs md:text-sm"
+                  href="/legal#cookies"
+                  className="text-gray-600 hover:text-[#3A3FC1] text-xs md:text-sm"
                 >
-                  Security
+                  Cookie Policy
                 </Link>
               </li>
               <li>
                 <Link
-                  href="#"
-                  className="text-gray-600 hover:text-blue-600 text-xs md:text-sm"
+                  href="/legal#accessibility"
+                  className="text-gray-600 hover:text-[#3A3FC1] text-xs md:text-sm"
                 >
-                  Cookies
+                  Accessibility
                 </Link>
               </li>
             </ul>
@@ -185,8 +152,8 @@ export default function Footer() {
                 style={{ objectFit: "contain" }}
               />
             </div>
-            <span className="text-gray-600 text-xs md:text-sm text-center md:text-left">
-              © {currentYear} Directory. All rights reserved.
+            <span className="text-gray-600 text-xs md:text-sm text-center flex justify-center items-center flex-col-reverse">
+              © {currentYear} Live Better Directory. All rights reserved.
             </span>
           </div>
 

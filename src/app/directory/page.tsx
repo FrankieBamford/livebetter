@@ -159,282 +159,296 @@ export default function DirectoryPage() {
   };
 
   return (
-    <main className="flex min-h-screen flex-col bg-[#F7EFE2]">
+    <main className="flex min-h-screen flex-col">
       <Navbar />
 
-      <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold text-[#0b6344] mb-6">
-          Mental Health & Wellness Services Directory
+      {/* Hero Section */}
+      <div className="bg-[#045741] py-16 text-center">
+        <h1 className="text-5xl font-extrabold mb-4 text-[#F6EDE1] tracking-tight drop-shadow-lg">
+          Services Directory
         </h1>
+        <p className="text-lg text-[#F6EDE1] max-w-2xl mx-auto font-medium">
+          Find mental health & wellness services across the UK with our
+          comprehensive directory.
+        </p>
+      </div>
 
-        <div className="flex flex-col md:flex-row gap-8">
-          {/* Filters Sidebar */}
-          <div
-            className={`md:w-1/4 bg-white p-6 rounded-lg shadow-md ${isFilterOpen ? "block" : "hidden md:block"}`}
-          >
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-xl font-semibold text-[#0b6344]">Filters</h2>
-              <button
-                onClick={toggleFilter}
-                className="md:hidden p-2 bg-gray-100 rounded-md"
-              >
-                <Filter size={18} />
-              </button>
-            </div>
-
-            <div className="space-y-6">
-              {/* Search Input */}
-              <div>
-                <label className="block text-sm font-medium mb-2">Search</label>
-                <div className="relative">
-                  <input
-                    type="text"
-                    placeholder="Search by keywords"
-                    className="w-full px-10 py-2 text-left bg-[#F8EFE2] border-2 border-[#004B2A] rounded-lg"
-                    value={searchInput}
-                    onChange={(e) => setSearchInput(e.target.value)}
-                  />
-                  <Search className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
-                </div>
+      <div className="bg-[#F6EDE1] py-16">
+        <div className="container mx-auto px-4">
+          <div className="flex flex-col md:flex-row gap-8">
+            {/* Filters Sidebar */}
+            <div
+              className={`md:w-1/4 bg-[#F6EDE1] p-6 rounded-lg shadow-md border-2 border-[#045842] ${isFilterOpen ? "block" : "hidden md:block"}`}
+            >
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-xl font-semibold text-[#0b6344]">
+                  Filters
+                </h2>
+                <button
+                  onClick={toggleFilter}
+                  className="md:hidden p-2 bg-[#F6EDE1] rounded-md border border-[#045842]"
+                >
+                  <Filter size={18} />
+                </button>
               </div>
 
-              {/* Location Input */}
-              <div>
-                <label className="block text-sm font-medium mb-2">
-                  Location
-                </label>
-                <div className="relative">
-                  <input
-                    type="text"
-                    placeholder="Enter location"
-                    className="w-full px-10 py-2 text-left bg-[#F8EFE2] border-2 border-[#004B2A] rounded-lg"
-                    value={locationInput}
-                    onChange={(e) => setLocationInput(e.target.value)}
-                  />
-                  <MapPin className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
+              <div className="space-y-6">
+                {/* Search Input */}
+                <div>
+                  <label className="block text-sm font-medium mb-2">
+                    Search
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="text"
+                      placeholder="Search by keywords"
+                      className="w-full px-10 py-2 text-left bg-[#F8EFE2] border-2 border-[#004B2A] rounded-lg"
+                      value={searchInput}
+                      onChange={(e) => setSearchInput(e.target.value)}
+                    />
+                    <Search className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
+                  </div>
                 </div>
-              </div>
 
-              {/* Support Needed Dropdown */}
-              <div>
-                <label className="block text-sm font-medium mb-2">
-                  What are you struggling with?
-                </label>
-                <MultiSelectDropdown
-                  options={supportNeeded.options}
-                  placeholder="What are you struggling with?"
-                  loading={supportNeeded.loading}
-                  error={supportNeeded.error}
-                  selectedValues={selections.supportNeeded}
-                  onSelectionChange={(values) => {
-                    setSelections((prev) => ({
-                      ...prev,
-                      supportNeeded: values,
-                    }));
+                {/* Location Input */}
+                <div>
+                  <label className="block text-sm font-medium mb-2">
+                    Location
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="text"
+                      placeholder="Enter location"
+                      className="w-full px-10 py-2 text-left bg-[#F8EFE2] border-2 border-[#004B2A] rounded-lg"
+                      value={locationInput}
+                      onChange={(e) => setLocationInput(e.target.value)}
+                    />
+                    <MapPin className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
+                  </div>
+                </div>
+
+                {/* Support Needed Dropdown */}
+                <div>
+                  <label className="block text-sm font-medium mb-2">
+                    What are you struggling with?
+                  </label>
+                  <MultiSelectDropdown
+                    options={supportNeeded.options}
+                    placeholder="What are you struggling with?"
+                    loading={supportNeeded.loading}
+                    error={supportNeeded.error}
+                    selectedValues={selections.supportNeeded}
+                    onSelectionChange={(values) => {
+                      setSelections((prev) => ({
+                        ...prev,
+                        supportNeeded: values,
+                      }));
+                    }}
+                    onRetry={retryFetch}
+                  />
+                </div>
+
+                {/* Support Types Dropdown */}
+                <div>
+                  <label className="block text-sm font-medium mb-2">
+                    What type of support?
+                  </label>
+                  <MultiSelectDropdown
+                    options={supportTypes.options}
+                    placeholder="What type of support?"
+                    loading={supportTypes.loading}
+                    error={supportTypes.error}
+                    selectedValues={selections.supportTypes}
+                    onSelectionChange={(values) => {
+                      setSelections((prev) => ({
+                        ...prev,
+                        supportTypes: values,
+                      }));
+                    }}
+                    onRetry={retryFetch}
+                  />
+                </div>
+
+                {/* Checkboxes */}
+                <div>
+                  <label className="block text-sm font-medium mb-2">
+                    Service Options
+                  </label>
+                  <div className="space-y-2">
+                    <div
+                      className={`flex items-center justify-start px-3 py-2 cursor-pointer transition-colors rounded-md ${checkboxStates.online ? "bg-blue-100" : "bg-gray-100"}`}
+                      onClick={() => {
+                        setCheckboxStates((prev) => ({
+                          ...prev,
+                          online: !prev.online,
+                        }));
+                      }}
+                    >
+                      <div
+                        className={`w-5 h-5 border rounded flex items-center justify-center ${checkboxStates.online ? "bg-blue-500 border-blue-500" : "border-gray-400"}`}
+                      >
+                        {checkboxStates.online && (
+                          <Check className="h-3 w-3 text-white" />
+                        )}
+                      </div>
+                      <span className="ml-2 text-sm">Online Services</span>
+                    </div>
+
+                    <div
+                      className={`flex items-center justify-start px-3 py-2 cursor-pointer transition-colors rounded-md ${checkboxStates.free ? "bg-green-100" : "bg-gray-100"}`}
+                      onClick={() => {
+                        setCheckboxStates((prev) => ({
+                          ...prev,
+                          free: !prev.free,
+                        }));
+                      }}
+                    >
+                      <div
+                        className={`w-5 h-5 border rounded flex items-center justify-center ${checkboxStates.free ? "bg-green-500 border-green-500" : "border-gray-400"}`}
+                      >
+                        {checkboxStates.free && (
+                          <Check className="h-3 w-3 text-white" />
+                        )}
+                      </div>
+                      <span className="ml-2 text-sm">Free Services</span>
+                    </div>
+
+                    <div
+                      className={`flex items-center justify-start px-3 py-2 cursor-pointer transition-colors rounded-md ${checkboxStates.referral ? "bg-purple-100" : "bg-gray-100"}`}
+                      onClick={() => {
+                        setCheckboxStates((prev) => ({
+                          ...prev,
+                          referral: !prev.referral,
+                        }));
+                      }}
+                    >
+                      <div
+                        className={`w-5 h-5 border rounded flex items-center justify-center ${checkboxStates.referral ? "bg-purple-500 border-purple-500" : "border-gray-400"}`}
+                      >
+                        {checkboxStates.referral && (
+                          <Check className="h-3 w-3 text-white" />
+                        )}
+                      </div>
+                      <span className="ml-2 text-sm">Requires Referral</span>
+                    </div>
+
+                    <div
+                      className={`flex items-center justify-start px-3 py-2 cursor-pointer transition-colors rounded-md ${checkboxStates.open ? "bg-yellow-100" : "bg-gray-100"}`}
+                      onClick={() => {
+                        setCheckboxStates((prev) => ({
+                          ...prev,
+                          open: !prev.open,
+                        }));
+                      }}
+                    >
+                      <div
+                        className={`w-5 h-5 border rounded flex items-center justify-center ${checkboxStates.open ? "bg-yellow-500 border-yellow-500" : "border-gray-400"}`}
+                      >
+                        {checkboxStates.open && (
+                          <Check className="h-3 w-3 text-white" />
+                        )}
+                      </div>
+                      <span className="ml-2 text-sm">Open Now</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Rating Filter */}
+                <div>
+                  <label className="block text-sm font-medium mb-2">
+                    Minimum Rating
+                  </label>
+                  <div className="flex items-center">
+                    <input
+                      type="range"
+                      min="0"
+                      max="5"
+                      value={ratingValue}
+                      onChange={handleRatingChange}
+                      className="w-full"
+                    />
+                    <span className="ml-2 text-sm w-10">{ratingValue} / 5</span>
+                  </div>
+                </div>
+
+                {/* Reset Filters Button */}
+                <button
+                  onClick={() => {
+                    setSearchInput("");
+                    setLocationInput("");
+                    setRatingValue(0);
+                    setCheckboxStates({
+                      online: false,
+                      free: false,
+                      referral: false,
+                      open: false,
+                    });
+                    setSelections({
+                      supportNeeded: [],
+                      supportTypes: [],
+                    });
                   }}
-                  onRetry={retryFetch}
-                />
+                  className="w-full py-2 bg-[#3A3FC1] text-white rounded-md hover:bg-[#2e32a6] transition-colors transform hover:scale-105 transition-all duration-200"
+                >
+                  Reset Filters
+                </button>
               </div>
-
-              {/* Support Types Dropdown */}
-              <div>
-                <label className="block text-sm font-medium mb-2">
-                  What type of support?
-                </label>
-                <MultiSelectDropdown
-                  options={supportTypes.options}
-                  placeholder="What type of support?"
-                  loading={supportTypes.loading}
-                  error={supportTypes.error}
-                  selectedValues={selections.supportTypes}
-                  onSelectionChange={(values) => {
-                    setSelections((prev) => ({
-                      ...prev,
-                      supportTypes: values,
-                    }));
-                  }}
-                  onRetry={retryFetch}
-                />
-              </div>
-
-              {/* Checkboxes */}
-              <div>
-                <label className="block text-sm font-medium mb-2">
-                  Service Options
-                </label>
-                <div className="space-y-2">
-                  <div
-                    className={`flex items-center justify-start px-3 py-2 cursor-pointer transition-colors rounded-md ${checkboxStates.online ? "bg-blue-100" : "bg-gray-100"}`}
-                    onClick={() => {
-                      setCheckboxStates((prev) => ({
-                        ...prev,
-                        online: !prev.online,
-                      }));
-                    }}
-                  >
-                    <div
-                      className={`w-5 h-5 border rounded flex items-center justify-center ${checkboxStates.online ? "bg-blue-500 border-blue-500" : "border-gray-400"}`}
-                    >
-                      {checkboxStates.online && (
-                        <Check className="h-3 w-3 text-white" />
-                      )}
-                    </div>
-                    <span className="ml-2 text-sm">Online Services</span>
-                  </div>
-
-                  <div
-                    className={`flex items-center justify-start px-3 py-2 cursor-pointer transition-colors rounded-md ${checkboxStates.free ? "bg-green-100" : "bg-gray-100"}`}
-                    onClick={() => {
-                      setCheckboxStates((prev) => ({
-                        ...prev,
-                        free: !prev.free,
-                      }));
-                    }}
-                  >
-                    <div
-                      className={`w-5 h-5 border rounded flex items-center justify-center ${checkboxStates.free ? "bg-green-500 border-green-500" : "border-gray-400"}`}
-                    >
-                      {checkboxStates.free && (
-                        <Check className="h-3 w-3 text-white" />
-                      )}
-                    </div>
-                    <span className="ml-2 text-sm">Free Services</span>
-                  </div>
-
-                  <div
-                    className={`flex items-center justify-start px-3 py-2 cursor-pointer transition-colors rounded-md ${checkboxStates.referral ? "bg-purple-100" : "bg-gray-100"}`}
-                    onClick={() => {
-                      setCheckboxStates((prev) => ({
-                        ...prev,
-                        referral: !prev.referral,
-                      }));
-                    }}
-                  >
-                    <div
-                      className={`w-5 h-5 border rounded flex items-center justify-center ${checkboxStates.referral ? "bg-purple-500 border-purple-500" : "border-gray-400"}`}
-                    >
-                      {checkboxStates.referral && (
-                        <Check className="h-3 w-3 text-white" />
-                      )}
-                    </div>
-                    <span className="ml-2 text-sm">Requires Referral</span>
-                  </div>
-
-                  <div
-                    className={`flex items-center justify-start px-3 py-2 cursor-pointer transition-colors rounded-md ${checkboxStates.open ? "bg-yellow-100" : "bg-gray-100"}`}
-                    onClick={() => {
-                      setCheckboxStates((prev) => ({
-                        ...prev,
-                        open: !prev.open,
-                      }));
-                    }}
-                  >
-                    <div
-                      className={`w-5 h-5 border rounded flex items-center justify-center ${checkboxStates.open ? "bg-yellow-500 border-yellow-500" : "border-gray-400"}`}
-                    >
-                      {checkboxStates.open && (
-                        <Check className="h-3 w-3 text-white" />
-                      )}
-                    </div>
-                    <span className="ml-2 text-sm">Open Now</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Rating Filter */}
-              <div>
-                <label className="block text-sm font-medium mb-2">
-                  Minimum Rating
-                </label>
-                <div className="flex items-center">
-                  <input
-                    type="range"
-                    min="0"
-                    max="5"
-                    value={ratingValue}
-                    onChange={handleRatingChange}
-                    className="w-full"
-                  />
-                  <span className="ml-2 text-sm w-10">{ratingValue} / 5</span>
-                </div>
-              </div>
-
-              {/* Reset Filters Button */}
-              <button
-                onClick={() => {
-                  setSearchInput("");
-                  setLocationInput("");
-                  setRatingValue(0);
-                  setCheckboxStates({
-                    online: false,
-                    free: false,
-                    referral: false,
-                    open: false,
-                  });
-                  setSelections({
-                    supportNeeded: [],
-                    supportTypes: [],
-                  });
-                }}
-                className="w-full py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors"
-              >
-                Reset Filters
-              </button>
-            </div>
-          </div>
-
-          {/* Services Grid */}
-          <div className="md:w-3/4">
-            {/* Mobile Filter Toggle */}
-            <div className="md:hidden mb-4">
-              <button
-                onClick={toggleFilter}
-                className="flex items-center gap-2 px-4 py-2 bg-white rounded-md shadow-sm"
-              >
-                <Filter size={18} />
-                <span>Filters</span>
-              </button>
-            </div>
-
-            {/* Results Count */}
-            <div className="mb-6">
-              <p className="text-gray-600">
-                Showing {filteredServices.length} of {services.length} services
-              </p>
             </div>
 
             {/* Services Grid */}
-            {loading ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {[...Array(6)].map((_, index) => (
-                  <div
-                    key={index}
-                    className="bg-white rounded-lg shadow-md p-4 h-80 animate-pulse"
-                  >
-                    <div className="h-40 bg-gray-200 rounded-md mb-4"></div>
-                    <div className="h-4 bg-gray-200 rounded mb-2 w-3/4"></div>
-                    <div className="h-4 bg-gray-200 rounded mb-2 w-1/2"></div>
-                    <div className="h-4 bg-gray-200 rounded mb-2 w-5/6"></div>
-                    <div className="h-4 bg-gray-200 rounded w-1/4"></div>
-                  </div>
-                ))}
+            <div className="md:w-3/4">
+              {/* Mobile Filter Toggle */}
+              <div className="md:hidden mb-4">
+                <button
+                  onClick={toggleFilter}
+                  className="flex items-center gap-2 px-4 py-2 bg-[#F6EDE1] rounded-md shadow-sm border-2 border-[#045842]"
+                >
+                  <Filter size={18} />
+                  <span>Filters</span>
+                </button>
               </div>
-            ) : filteredServices.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredServices.map((service) => (
-                  <ServiceCard key={service.id} service={service} />
-                ))}
-              </div>
-            ) : (
-              <div className="text-center py-12 bg-white rounded-lg shadow-md">
-                <p className="text-xl text-gray-600">
-                  No services match your filters
-                </p>
-                <p className="text-gray-500 mt-2">
-                  Try adjusting your filters to see more results
+
+              {/* Results Count */}
+              <div className="mb-6">
+                <p className="text-gray-600">
+                  Showing {filteredServices.length} of {services.length}{" "}
+                  services
                 </p>
               </div>
-            )}
+
+              {/* Services Grid */}
+              {loading ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {[...Array(6)].map((_, index) => (
+                    <div
+                      key={index}
+                      className="bg-white rounded-lg shadow-md p-4 h-80 animate-pulse"
+                    >
+                      <div className="h-40 bg-gray-200 rounded-md mb-4"></div>
+                      <div className="h-4 bg-gray-200 rounded mb-2 w-3/4"></div>
+                      <div className="h-4 bg-gray-200 rounded mb-2 w-1/2"></div>
+                      <div className="h-4 bg-gray-200 rounded mb-2 w-5/6"></div>
+                      <div className="h-4 bg-gray-200 rounded w-1/4"></div>
+                    </div>
+                  ))}
+                </div>
+              ) : filteredServices.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {filteredServices.map((service) => (
+                    <ServiceCard key={service.id} service={service} />
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-12 bg-[#F6EDE1] rounded-lg shadow-md border-2 border-[#045842]">
+                  <p className="text-xl text-[#0b6344]">
+                    No services match your filters
+                  </p>
+                  <p className="text-gray-700 mt-2">
+                    Try adjusting your filters to see more results
+                  </p>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>

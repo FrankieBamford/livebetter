@@ -83,7 +83,7 @@ export default function NearbyServices() {
 
   useEffect(() => {
     if (!locationAccepted) return; // Don't fetch until location consent is handled
-    
+
     const fetchServices = async () => {
       setLoading(true);
       try {
@@ -172,6 +172,7 @@ export default function NearbyServices() {
           <LocationConsent
             onAccept={handleLocationAccept}
             onDecline={handleLocationDecline}
+            className=" bg-[#e40909]"
           />
         </div>
       )}
@@ -183,7 +184,9 @@ export default function NearbyServices() {
         ) : services.length === 0 ? (
           <div className="col-span-full text-center text-[#F6EDE1]">
             <p className="text-lg mb-2">No services found</p>
-            <p className="text-sm opacity-75">Check the console for debugging info</p>
+            <p className="text-sm opacity-75">
+              Check the console for debugging info
+            </p>
           </div>
         ) : (
           services.map((service) => (
@@ -250,7 +253,7 @@ export default function NearbyServices() {
                 <div className="flex justify-between items-center">
                   <div className="flex space-x-2">
                     {service.phone && (
-                      <a 
+                      <a
                         href={`tel:${service.phone}`}
                         className="p-2 border border-gray-200 rounded-md hover:bg-gray-100 transition-colors"
                       >
@@ -258,7 +261,7 @@ export default function NearbyServices() {
                       </a>
                     )}
                     {service.email && (
-                      <a 
+                      <a
                         href={`mailto:${service.email}`}
                         className="p-2 border border-gray-200 rounded-md hover:bg-gray-100 transition-colors"
                       >
