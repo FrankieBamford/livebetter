@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { createClient } from "../../supabase/client";
+import { createClient } from "@/utils/supabase/client";
 import { Button } from "./ui/button";
 import { UserCircle, Menu, X } from "lucide-react";
 import UserProfile from "./user-profile";
