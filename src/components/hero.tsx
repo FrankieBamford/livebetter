@@ -11,10 +11,12 @@ import {
   ChevronDown,
   MapPin,
   Search,
+  Filter,
 } from "lucide-react";
 import { createClient } from "../../supabase/client";
 import { useSupabaseDropdowns } from "@/hooks/useSupabaseDropdowns";
 import MultiSelectDropdown from "./MultiSelectDropdown";
+import AdvancedFiltersDropdown, { AdvancedFilters } from "./AdvancedFiltersDropdown";
 
 interface Category {
   id: number;
@@ -421,6 +423,31 @@ export default function Hero() {
     window.location.href = `/directory?${params.toString()}`;
   };
 
+  const [isAdvancedOpen, setIsAdvancedOpen] = useState(false);
+  const [advancedFilters, setAdvancedFilters] = useState<AdvancedFilters>({
+    inPerson: false,
+    ageGroups: [],
+    languages: [],
+    providerTypes: [],
+    accessibility: [],
+    distance: 0,
+  });
+
+  const handleApplyAdvanced = () => {
+    setIsAdvancedOpen(false);
+    // Optionally trigger search here or just let user click Search
+  };
+  const handleResetAdvanced = () => {
+    setAdvancedFilters({
+      inPerson: false,
+      ageGroups: [],
+      languages: [],
+      providerTypes: [],
+      accessibility: [],
+      distance: 0,
+    });
+  };
+
   return (
     <div className="relative bg-[#F7EFE2] py-8 md:py-12 lg:py-16 border-[#0B6445]">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -686,24 +713,25 @@ export default function Hero() {
                 </div>
               </div>
 
-              <div className="mt-6">
-                <div className="flex items-end flex-row gap-x-10">
-                  <label className="text-sm mb-1 grow min-w-[120px]">
-                    Minimum Rating
-                  </label>
-                  <div className="w-full flex items-center">
-                    <input
-                      type="range"
-                      min="0"
-                      max="5"
-                      value={ratingValue}
-                      onChange={handleRatingChange}
-                      className="w-full max-w-3xl flex flex-row justify-center items-center"
-                    />
-                    <span className="ml-2 text-sm w-10">{ratingValue} / 5</span>
-                  </div>
-                </div>
+              <div className="mt-6 flex flex-col items-center w-full">
+                <button
+                  className="flex items-center gap-2 px-4 py-2 bg-white border border-[#3A3FC1] text-[#3A3FC1] rounded-lg shadow-sm hover:bg-[#f0f3ff] transition-all duration-150"
+                  onClick={() => setIsAdvancedOpen(true)}
+                  type="button"
+                >
+                  <Filter className="w-4 h-4" />
+                  Advanced Filters
+                </button>
               </div>
+
+              <AdvancedFiltersDropdown
+                open={isAdvancedOpen}
+                onClose={() => setIsAdvancedOpen(false)}
+                filters={advancedFilters}
+                setFilters={setAdvancedFilters}
+                onApply={handleApplyAdvanced}
+                onReset={handleResetAdvanced}
+              />
 
               <div className="mt-6 flex justify-center">
                 <button
