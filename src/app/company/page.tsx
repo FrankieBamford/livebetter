@@ -9,7 +9,7 @@ const teamMembers = [
     name: "Sarah Mitchell",
     role: "Founder & CEO",
     bio: "Sarah founded Live Better Directory with a mission to make mental health resources more accessible to everyone. With over 15 years of experience in healthcare and technology, she leads our vision and strategy.",
-    image: "/images/headshots/sarah_mitchell .png",
+    image: "/images/headshots/sarah_mitchell.png",
     linkedin: "#",
   },
   {
