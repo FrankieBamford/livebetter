@@ -172,7 +172,6 @@ export default function NearbyServices() {
           <LocationConsent
             onAccept={handleLocationAccept}
             onDecline={handleLocationDecline}
-            className=" bg-[#e40909]"
           />
         </div>
       )}
